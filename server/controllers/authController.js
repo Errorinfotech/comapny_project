@@ -9,10 +9,13 @@ const generateToken = (id) => {
 // @route   POST /api/auth/login
 // @access  Public
 const loginUser = async (req, res) => {
-    const { username, password } = req.body;
+    let { username, password } = req.body;
 
     try {
-        const user = await User.findOne({ username });
+        const cleanUsername = username ? username.trim() : '';
+        const user = await User.findOne({ 
+            username: { $regex: new RegExp(`^${cleanUsername}$`, 'i') } 
+        });
 
         if (user && (await user.comparePassword(password))) {
             res.json({
