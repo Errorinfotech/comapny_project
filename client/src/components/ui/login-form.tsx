@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { User, Lock, ArrowRight } from 'lucide-react';
 
 // Vertex shader source code
@@ -82,7 +82,7 @@ export function SmokeyBackground({
   backdropBlurAmount = "sm",
   color = "#1E40AF", // Default dark blue
   className = "",
-}: SmokeyBackgroundProps): JSX.Element {
+}: SmokeyBackgroundProps): React.JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
