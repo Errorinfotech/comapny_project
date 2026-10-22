@@ -52,7 +52,7 @@ const SearchResults = () => {
         <div className="space-y-8">
             <div>
                 <h1 className="text-3xl font-bold flex items-center space-x-4">
-                    <Search className="h-8 w-8 text-indigo-500" />
+                    <Search className="h-8 w-8 text-sky-700 dark:text-sky-400" />
                     <span>Search Results for "{query}"</span>
                 </h1>
                 <p className="text-slate-500 mt-2">
@@ -68,7 +68,7 @@ const SearchResults = () => {
                     {results.projects.length > 0 && (
                         <section className="space-y-6">
                             <h2 className="text-xl font-bold flex items-center space-x-2">
-                                <Folder className="h-5 w-5 text-indigo-500" />
+                                <Folder className="h-5 w-5 text-sky-700 dark:text-sky-400" />
                                 <span>Projects</span>
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -116,13 +116,13 @@ const SearchResults = () => {
                     {results.employees.length > 0 && (
                         <section className="space-y-6">
                             <h2 className="text-xl font-bold flex items-center space-x-2">
-                                <User className="h-5 w-5 text-indigo-500" />
+                                <User className="h-5 w-5 text-sky-700 dark:text-sky-400" />
                                 <span>Employees</span>
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                 {results.employees.map((emp) => (
                                     <div key={emp._id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex items-center space-x-4">
-                                        <div className="h-10 w-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center font-bold text-indigo-600">
+                                        <div className="h-10 w-10 rounded-full bg-sky-100 dark:bg-sky-900/40 flex items-center justify-center font-bold text-sky-800 dark:text-sky-200">
                                             {emp.username.charAt(0).toUpperCase()}
                                         </div>
                                         <div>

@@ -30,31 +30,28 @@ const AdminDashboard = () => {
 
     const cards = [
         {
-            name: 'Total Departments',
+            name: 'Office Departments',
             value: stats.totalDepartments,
             icon: Briefcase,
-            gradient: 'from-blue-500 to-indigo-600',
-            bg: 'bg-blue-500/10 text-blue-500',
-            badge: 'Active Teams',
+            bg: 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600',
+            badge: 'Office structure active',
             onClick: () => navigate('/admin/departments')
         },
         {
-            name: 'Total Employees',
-            value: stats.totalEmployees,
-            icon: Users,
-            gradient: 'from-indigo-500 to-purple-600',
-            bg: 'bg-indigo-500/10 text-indigo-500',
-            badge: 'Team Members',
-            onClick: () => navigate('/admin/employees')
-        },
-        {
-            name: 'Total Projects',
+            name: 'Active Development Units',
             value: stats.totalProjects,
             icon: FolderOpen,
-            gradient: 'from-cyan-500 to-blue-600',
-            bg: 'bg-cyan-500/10 text-cyan-500',
-            badge: 'Vault Items',
+            bg: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600',
+            badge: 'Office structure active',
             onClick: () => navigate('/admin/projects')
+        },
+        {
+            name: 'Office Workforce',
+            value: stats.totalEmployees,
+            icon: Users,
+            bg: 'bg-amber-100 dark:bg-amber-900/30 text-amber-600',
+            badge: 'Office structure active',
+            onClick: () => navigate('/admin/employees')
         },
     ];
 
@@ -74,28 +71,22 @@ const AdminDashboard = () => {
     return (
         <div className="space-y-8 max-w-7xl mx-auto">
             {/* Header Banner */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-200/60 dark:border-slate-800/60">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                    <div className="flex items-center space-x-2.5 mb-1">
-                        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                            Admin Overview
-                        </h1>
-                        <Badge variant="primary" dot size="sm">System Online</Badge>
-                    </div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
-                        Monitor departments, employees and project infrastructure in real time.
+                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Admin Overview</h1>
+                    <p className="text-slate-500 mt-2">
+                        One view for your complete office setup, teams, and development delivery.
                     </p>
                 </div>
 
                 <div className="flex items-center space-x-3">
-                    <Button
-                        variant="secondary"
-                        size="sm"
+                    <button
                         onClick={() => navigate('/admin/projects')}
-                        icon={FolderOpen}
+                        className="inline-flex items-center justify-center space-x-2 bg-gradient-to-b from-[#32509a] to-[#233c74] hover:from-[#3859aa] hover:to-[#264180] text-white px-5 py-3 rounded-2xl transition-all shadow-md shadow-[#233c74]/30 font-bold cursor-pointer"
                     >
-                        Browse All Projects
-                    </Button>
+                        <Plus className="h-5 w-5" />
+                        <span>New</span>
+                    </button>
                 </div>
             </div>
 
@@ -104,42 +95,25 @@ const AdminDashboard = () => {
                 {cards.map((card, index) => (
                     <motion.div
                         key={card.name}
-                        initial={{ opacity: 0, y: 15 }}
+                        initial={{ opacity: 0, y: 18 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.08, duration: 0.3 }}
+                        transition={{ delay: index * 0.08 }}
+                        onClick={card.onClick}
+                        className="bg-white dark:bg-[#070e28] p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-[#121c42] cursor-pointer hover:shadow-md transition-shadow"
                     >
-                        <Card
-                            onClick={card.onClick}
-                            className="relative overflow-hidden cursor-pointer group"
-                        >
-                            {/* Subtle background glow on hover */}
-                            <div className="absolute -right-8 -top-8 w-28 h-28 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-all duration-300" />
-
-                            <div className="flex items-center justify-between relative z-10">
-                                <div>
-                                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                                        {card.name}
-                                    </p>
-                                    <p className="text-3xl sm:text-4xl font-extrabold mt-2 text-slate-900 dark:text-white tracking-tight">
-                                        {card.value}
-                                    </p>
-                                </div>
-                                <div className={`p-3.5 rounded-2xl ${card.bg} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
-                                    <card.icon className="h-6 w-6" />
-                                </div>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{card.name}</p>
+                                <p className="text-3xl font-bold mt-2 text-slate-900 dark:text-white">{card.value}</p>
                             </div>
-
-                            <div className="mt-5 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
-                                <span className="flex items-center space-x-1.5 text-emerald-500 font-medium">
-                                    <TrendingUp className="h-3.5 w-3.5" />
-                                    <span>{card.badge}</span>
-                                </span>
-                                <span className="group-hover:translate-x-1 transition-transform text-indigo-500 font-semibold flex items-center space-x-1">
-                                    <span>View Details</span>
-                                    <ArrowRight className="h-3 w-3" />
-                                </span>
+                            <div className={`p-3 rounded-xl ${card.bg}`}>
+                                <card.icon className="h-6 w-6" />
                             </div>
-                        </Card>
+                        </div>
+                        <div className="mt-4 flex items-center text-xs text-emerald-600 dark:text-emerald-400 space-x-1 font-medium">
+                            <TrendingUp className="h-3 w-3" />
+                            <span>{card.badge}</span>
+                        </div>
                     </motion.div>
                 ))}
             </div>
@@ -147,7 +121,7 @@ const AdminDashboard = () => {
             {/* Quick Actions & System Info */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Quick Actions */}
-                <Card className="lg:col-span-2">
+                <Card className="lg:col-span-2 dark:bg-[#070e28] dark:border-[#121c42]">
                     <div className="flex items-center justify-between mb-5">
                         <div>
                             <h2 className="text-base font-bold text-slate-900 dark:text-white">
@@ -160,46 +134,46 @@ const AdminDashboard = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <button
                             onClick={() => navigate('/admin/departments')}
-                            className="flex items-start space-x-4 p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 hover:border-indigo-500 dark:hover:border-indigo-500/60 bg-white/50 dark:bg-slate-900/40 hover:bg-indigo-500/5 transition-all text-left group"
+                            className="flex items-start space-x-4 p-4 rounded-xl border border-slate-200 dark:border-[#14235a] hover:border-blue-900/40 dark:hover:border-sky-500/50 bg-white/70 dark:bg-[#091338] hover:bg-blue-50/40 dark:hover:bg-[#0d1c52] transition-all text-left group shadow-xs cursor-pointer"
                         >
-                            <div className="p-3 bg-blue-500/10 text-blue-500 rounded-xl group-hover:scale-105 transition-transform">
+                            <div className="p-3 bg-blue-50 text-blue-900 dark:bg-blue-950/60 dark:text-blue-300 rounded-xl group-hover:scale-105 transition-transform border border-blue-900/10 dark:border-blue-800/40">
                                 <Briefcase className="h-5 w-5" />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-indigo-500 transition-colors">
+                                <p className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-blue-950 dark:group-hover:text-sky-300 transition-colors">
                                     Manage Departments
                                 </p>
                                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                                     Create, edit or organize company divisions
                                 </p>
                             </div>
-                            <ArrowRight className="h-4 w-4 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all self-center" />
+                            <ArrowRight className="h-4 w-4 text-slate-300 dark:text-slate-500 group-hover:text-blue-900 dark:group-hover:text-sky-300 group-hover:translate-x-0.5 transition-all self-center" />
                         </button>
 
                         <button
                             onClick={() => navigate('/admin/employees')}
-                            className="flex items-start space-x-4 p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 hover:border-indigo-500 dark:hover:border-indigo-500/60 bg-white/50 dark:bg-slate-900/40 hover:bg-indigo-500/5 transition-all text-left group"
+                            className="flex items-start space-x-4 p-4 rounded-xl border border-slate-200 dark:border-[#14235a] hover:border-blue-900/40 dark:hover:border-sky-500/50 bg-white/70 dark:bg-[#091338] hover:bg-blue-50/40 dark:hover:bg-[#0d1c52] transition-all text-left group shadow-xs cursor-pointer"
                         >
-                            <div className="p-3 bg-indigo-500/10 text-indigo-500 rounded-xl group-hover:scale-105 transition-transform">
+                            <div className="p-3 bg-sky-50 text-blue-950 dark:bg-blue-950/60 dark:text-sky-300 rounded-xl group-hover:scale-105 transition-transform border border-blue-950/10 dark:border-blue-900/40">
                                 <Users className="h-5 w-5" />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-indigo-500 transition-colors">
+                                <p className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-blue-950 dark:group-hover:text-sky-300 transition-colors">
                                     Manage Employees
                                 </p>
                                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                                     Onboard colleagues, assign roles and credentials
                                 </p>
                             </div>
-                            <ArrowRight className="h-4 w-4 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all self-center" />
+                            <ArrowRight className="h-4 w-4 text-slate-300 dark:text-slate-500 group-hover:text-blue-950 dark:group-hover:text-sky-300 group-hover:translate-x-0.5 transition-all self-center" />
                         </button>
                     </div>
                 </Card>
 
                 {/* System Status / Health */}
-                <Card>
+                <Card className="dark:bg-[#070e28] dark:border-[#121c42]">
                     <div className="flex items-center space-x-3 mb-4">
-                        <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-500">
+                        <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-500 dark:bg-emerald-950/50 dark:text-emerald-400">
                             <ShieldCheck className="h-5 w-5" />
                         </div>
                         <div>
@@ -209,22 +183,22 @@ const AdminDashboard = () => {
                     </div>
 
                     <div className="space-y-3 pt-2 text-xs">
-                        <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
-                            <span className="text-slate-500 font-medium">Database</span>
-                            <span className="flex items-center space-x-1.5 text-emerald-500 font-semibold">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-[#091338] border border-slate-100 dark:border-[#14235a]">
+                            <span className="text-slate-500 dark:text-slate-400 font-medium">Database</span>
+                            <span className="flex items-center space-x-1.5 text-emerald-500 dark:text-emerald-400 font-semibold">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
                                 <span>Atlas Connected</span>
                             </span>
                         </div>
 
-                        <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
-                            <span className="text-slate-500 font-medium">Auth Engine</span>
-                            <span className="text-indigo-500 font-semibold">JWT Active</span>
+                        <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-[#091338] border border-slate-100 dark:border-[#14235a]">
+                            <span className="text-slate-500 dark:text-slate-400 font-medium">Auth Engine</span>
+                            <span className="text-blue-600 dark:text-sky-400 font-semibold">JWT Active</span>
                         </div>
 
-                        <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
-                            <span className="text-slate-500 font-medium">Max Upload Limit</span>
-                            <span className="text-slate-700 dark:text-slate-300 font-semibold">2000 MB</span>
+                        <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-[#091338] border border-slate-100 dark:border-[#14235a]">
+                            <span className="text-slate-500 dark:text-slate-400 font-medium">Max Upload Limit</span>
+                            <span className="text-slate-700 dark:text-slate-200 font-semibold">2000 MB</span>
                         </div>
                     </div>
                 </Card>

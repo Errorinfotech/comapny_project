@@ -101,7 +101,7 @@ const AdminProjects = () => {
                 <input
                     type="text"
                     placeholder="Search by title, author (@employee) or department..."
-                    className="w-full bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs font-medium focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 focus:outline-none text-slate-900 dark:text-white placeholder:text-slate-400 shadow-sm"
+                    className="w-full bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs font-medium focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 focus:outline-none text-slate-900 dark:text-white placeholder:text-slate-400 shadow-sm"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -138,8 +138,8 @@ const AdminProjects = () => {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="h-20 w-full bg-gradient-to-tr from-indigo-500/10 via-cyan-500/10 to-transparent p-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-800/60">
-                                    <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-500">
+                                <div className="h-20 w-full bg-gradient-to-tr from-blue-600/10 via-cyan-500/10 to-transparent p-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-800/60">
+                                    <div className="p-2.5 rounded-xl bg-blue-600/10 text-blue-600">
                                         <FolderOpen className="h-5 w-5" />
                                     </div>
                                     <Badge variant="default" size="sm">
@@ -151,14 +151,14 @@ const AdminProjects = () => {
                             {/* Card Content */}
                             <div className="p-5 flex-1 flex flex-col justify-between">
                                 <div>
-                                    <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2 line-clamp-1 group-hover:text-indigo-500 transition-colors">
+                                    <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2 line-clamp-1 group-hover:text-blue-600 transition-colors">
                                         {project.title}
                                     </h3>
 
                                     {/* Author & Dept meta */}
                                     <div className="flex items-center space-x-3 text-xs text-slate-500 dark:text-slate-400 mb-3 font-medium">
                                         <div className="flex items-center space-x-1">
-                                            <User className="h-3.5 w-3.5 text-indigo-500" />
+                                            <User className="h-3.5 w-3.5 text-blue-600" />
                                             <span>@{project.employee?.username || 'member'}</span>
                                         </div>
                                         <span>•</span>
@@ -181,7 +181,7 @@ const AdminProjects = () => {
                                                 href={project.liveUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                                className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                                                 title="View Live Demo"
                                             >
                                                 <ExternalLink className="h-4 w-4" />
@@ -192,7 +192,7 @@ const AdminProjects = () => {
                                                 href={project.githubUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                                className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                                                 title="View GitHub Repository"
                                             >
                                                 <Code className="h-4 w-4" />
@@ -213,7 +213,7 @@ const AdminProjects = () => {
                                     <Calendar className="h-3 w-3" />
                                     <span>{new Date(project.createdAt).toLocaleDateString()}</span>
                                 </div>
-                                <span className="text-indigo-500 font-semibold group-hover:underline">
+                                <span className="text-blue-600 font-semibold group-hover:underline">
                                     View Vault
                                 </span>
                             </div>

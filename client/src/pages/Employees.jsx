@@ -133,7 +133,7 @@ const Employees = () => {
                         <input
                             type="text"
                             placeholder="Filter employees by username or department..."
-                            className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs font-medium focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 focus:outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
+                            className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs font-medium focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 focus:outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -157,11 +157,11 @@ const Employees = () => {
                                 <tr
                                     key={emp._id}
                                     onClick={() => navigate(`/admin/projects?employeeId=${emp._id}`)}
-                                    className="hover:bg-indigo-500/5 dark:hover:bg-indigo-500/5 transition-colors group cursor-pointer"
+                                    className="hover:bg-blue-600/5 dark:hover:bg-blue-600/5 transition-colors group cursor-pointer"
                                 >
                                     <td className="px-6 py-4">
                                         <div className="flex items-center space-x-3">
-                                            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-indigo-700 flex items-center justify-center font-bold text-white text-xs shadow-md shadow-indigo-500/20">
+                                            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-blue-600 to-blue-800 flex items-center justify-center font-bold text-white text-xs shadow-md shadow-blue-600/20">
                                                 {emp.username.charAt(0).toUpperCase()}
                                             </div>
                                             <div>
@@ -191,7 +191,7 @@ const Employees = () => {
                                         <div className="flex items-center justify-end space-x-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); setSelectedEmp(emp); setShowResetModal(true); }}
-                                                className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                                className="p-1.5 rounded-lg text-slate-400 hover:text-blue-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                                                 title="Reset Password"
                                             >
                                                 <Key className="h-4 w-4" />
@@ -253,7 +253,7 @@ const Employees = () => {
                             Department
                         </label>
                         <select
-                            className="w-full rounded-xl py-2.5 px-3 text-sm bg-white/80 dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500"
+                            className="w-full rounded-xl py-2.5 px-3 text-sm bg-white/80 dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600/40 focus:border-blue-600"
                             required
                             value={newEmp.departmentId}
                             onChange={(e) => setNewEmp({ ...newEmp, departmentId: e.target.value })}

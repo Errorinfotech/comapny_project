@@ -42,7 +42,7 @@ export const Select = forwardRef(function Select(
             bg-white/80 dark:bg-slate-900/60 
             text-slate-900 dark:text-slate-100
             border border-slate-200 dark:border-slate-800
-            focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500
+            focus:outline-none focus:ring-2 focus:ring-blue-900/30 focus:border-blue-900
             ${Icon ? 'pl-10' : 'pl-4'}
             pr-10
             ${error ? 'border-rose-500 focus:ring-rose-500/40 focus:border-rose-500' : ''}

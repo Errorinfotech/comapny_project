@@ -30,7 +30,7 @@ const ClientPortal = () => {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-full min-h-[50vh]">
-                <div className="animate-spin rounded-full h-10 w-10 border-2 border-indigo-600 border-t-transparent" />
+                <div className="animate-spin rounded-full h-10 w-10 border-2 border-blue-700 border-t-transparent" />
             </div>
         );
     }
@@ -42,7 +42,7 @@ const ClientPortal = () => {
     return (
         <div className="max-w-6xl mx-auto py-4 space-y-8">
             {/* Hero Banner */}
-            <div className="relative overflow-hidden glass-card rounded-3xl p-8 border border-indigo-500/20 bg-gradient-to-r from-indigo-500/10 via-purple-500/5 to-transparent">
+            <div className="relative overflow-hidden glass-card rounded-3xl p-8 border border-blue-500/20 bg-gradient-to-r from-blue-500/10 via-cyan-500/5 to-transparent">
                 <div className="max-w-2xl relative z-10">
                     <div className="flex items-center space-x-2.5 mb-3">
                         <Badge variant="primary" dot size="sm">Dedicated Client Portal</Badge>
@@ -54,7 +54,7 @@ const ClientPortal = () => {
                     </h1>
                     <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
                         Access your project links, live deployments and deliverables tailored specifically for{' '}
-                        <span className="font-semibold text-indigo-500 dark:text-indigo-400">{subtype}</span>.
+                        <span className="font-semibold text-blue-600 dark:text-sky-400">{subtype}</span>.
                     </p>
                 </div>
             </div>
@@ -83,13 +83,13 @@ const ClientPortal = () => {
                                 <Card className="h-full flex flex-col justify-between group" hover={true}>
                                     <div>
                                         <div className="flex items-center justify-between mb-4">
-                                            <div className="p-3 rounded-xl bg-indigo-500/10 text-indigo-500 group-hover:scale-105 transition-transform">
+                                            <div className="p-3 rounded-xl bg-blue-600/10 text-blue-600 group-hover:scale-105 transition-transform">
                                                 <Building2 className="h-5 w-5" />
                                             </div>
                                             <Badge variant="success" size="sm">Online</Badge>
                                         </div>
 
-                                        <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2 group-hover:text-indigo-500 transition-colors">
+                                        <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2 group-hover:text-blue-600 transition-colors">
                                             {client.businessName}
                                         </h3>
 
@@ -103,7 +103,7 @@ const ClientPortal = () => {
                                             href={client.link}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="w-full flex items-center justify-center space-x-2 py-2 px-4 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-500/20 transition-all"
+                                            className="w-full flex items-center justify-center space-x-2 py-2 px-4 rounded-xl text-xs font-semibold bg-blue-700 hover:bg-blue-600 text-white shadow-md shadow-blue-600/20 transition-all"
                                         >
                                             <span>Open Portal</span>
                                             <ExternalLink className="h-3.5 w-3.5" />

@@ -119,13 +119,13 @@ const Departments = () => {
                         <Card className="flex flex-col justify-between h-full group">
                             <div>
                                 <div className="flex items-start justify-between mb-4">
-                                    <div className="p-3 bg-indigo-500/10 text-indigo-500 rounded-xl group-hover:scale-105 transition-transform">
+                                    <div className="p-3 bg-blue-600/10 text-blue-600 rounded-xl group-hover:scale-105 transition-transform">
                                         <Briefcase className="h-5 w-5" />
                                     </div>
                                     <div className="flex items-center space-x-1">
                                         <button
                                             onClick={() => handleEdit(dept)}
-                                            className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                            className="p-1.5 rounded-lg text-slate-400 hover:text-blue-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                                             title="Edit Department"
                                         >
                                             <Edit className="h-4 w-4" />
@@ -140,7 +140,7 @@ const Departments = () => {
                                     </div>
                                 </div>
 
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1.5 group-hover:text-indigo-500 transition-colors">
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1.5 group-hover:text-blue-600 transition-colors">
                                     {dept.name}
                                 </h3>
                                 <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
@@ -151,14 +151,14 @@ const Departments = () => {
                             <div className="pt-4 mt-6 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-xs">
                                 <button
                                     onClick={() => navigate(`/admin/employees?dept=${dept._id}`)}
-                                    className="flex items-center space-x-1.5 text-slate-500 hover:text-indigo-500 font-medium transition-colors"
+                                    className="flex items-center space-x-1.5 text-slate-500 hover:text-blue-600 font-medium transition-colors"
                                 >
                                     <Users className="h-3.5 w-3.5" />
                                     <span>View Team</span>
                                 </button>
                                 <button
                                     onClick={() => navigate(`/admin/projects?dept=${dept._id}`)}
-                                    className="flex items-center space-x-1.5 text-indigo-500 hover:underline font-semibold"
+                                    className="flex items-center space-x-1.5 text-blue-600 hover:underline font-semibold"
                                 >
                                     <FolderOpen className="h-3.5 w-3.5" />
                                     <span>Projects</span>
@@ -203,7 +203,7 @@ const Departments = () => {
                         <textarea
                             rows={3}
                             placeholder="Briefly describe what this department manages..."
-                            className="w-full rounded-xl p-3 text-sm bg-white/80 dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500"
+                            className="w-full rounded-xl p-3 text-sm bg-white/80 dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600/40 focus:border-blue-600"
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         />

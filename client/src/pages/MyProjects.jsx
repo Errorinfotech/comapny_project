@@ -54,7 +54,7 @@ const ProjectMenu = ({ onEdit, onDelete }) => {
                             onClick={() => { onEdit(); setIsOpen(false); }}
                             className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-medium transition-all group"
                         >
-                            <Edit className="h-4 w-4 text-slate-400 group-hover:text-indigo-500" />
+                            <Edit className="h-4 w-4 text-slate-400 group-hover:text-blue-600" />
                             <span className="text-slate-700 dark:text-slate-300">Edit Project</span>
                         </button>
                         <button
@@ -188,11 +188,11 @@ const MyProjects = ({ defaultOpenUpload = false }) => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] bg-indigo-600/20 backdrop-blur-md border-4 border-dashed border-indigo-500 m-8 rounded-[3rem] flex items-center justify-center pointer-events-none"
+                        className="fixed inset-0 z-[100] bg-blue-700/20 backdrop-blur-md border-4 border-dashed border-blue-600 m-8 rounded-[3rem] flex items-center justify-center pointer-events-none"
                     >
                         <div className="bg-white dark:bg-slate-900 p-12 rounded-[2.5rem] shadow-2xl text-center space-y-4">
-                            <div className="h-24 w-24 bg-indigo-100 dark:bg-indigo-900/30 rounded-3xl flex items-center justify-center mx-auto animate-bounce">
-                                <Upload className="h-12 w-12 text-indigo-600" />
+                            <div className="h-24 w-24 bg-sky-100 dark:bg-blue-950/30 rounded-3xl flex items-center justify-center mx-auto animate-bounce">
+                                <Upload className="h-12 w-12 text-blue-700" />
                             </div>
                             <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Drop to Upload</h2>
                             <p className="text-slate-500 font-medium">Release to start your new project upload.</p>
@@ -214,7 +214,7 @@ const MyProjects = ({ defaultOpenUpload = false }) => {
                 </div>
                 <button
                     onClick={() => { setEditingProject(null); setShowProjectModal(true); }}
-                    className="flex items-center space-x-3 bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-[2rem] transition-all shadow-xl shadow-indigo-500/20 hover:scale-105 active:scale-95"
+                    className="flex items-center space-x-3 bg-blue-700 hover:bg-blue-600 text-white px-8 py-4 rounded-[2rem] transition-all shadow-xl shadow-blue-600/20 hover:scale-105 active:scale-95"
                 >
                     <Plus className="h-6 w-6 font-bold" />
                     <span className="font-black uppercase tracking-wider text-sm">New Project</span>
@@ -226,7 +226,7 @@ const MyProjects = ({ defaultOpenUpload = false }) => {
                 <input
                     type="text"
                     placeholder="Search through your vault..."
-                    className="w-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 pl-16 pr-8 py-5 rounded-[2rem] focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500/50 outline-none text-slate-900 dark:text-white font-bold text-lg shadow-sm transition-all"
+                    className="w-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 pl-16 pr-8 py-5 rounded-[2rem] focus:ring-4 focus:ring-blue-600/10 focus:border-blue-600/50 outline-none text-slate-900 dark:text-white font-bold text-lg shadow-sm transition-all"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -260,7 +260,7 @@ const MyProjects = ({ defaultOpenUpload = false }) => {
 
                         <div className="p-6 relative z-10 flex-1">
                             <div className="flex justify-between items-start mb-4">
-                                <div className="p-3 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 shadow-sm">
+                                <div className="p-3 rounded-2xl bg-sky-50 dark:bg-blue-950/30 text-blue-700 shadow-sm">
                                     <Folder className="h-7 w-7" />
                                 </div>
                                 <div className="flex flex-col items-end space-y-2">
@@ -278,8 +278,8 @@ const MyProjects = ({ defaultOpenUpload = false }) => {
                                 <h3 className="text-2xl font-black mb-1 truncate text-slate-900 dark:text-white">{project.title}</h3>
                                 <div className="flex items-center space-x-4 text-xs text-slate-500 font-bold">
                                     <div className="flex items-center space-x-1.5">
-                                        <div className="h-5 w-5 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center">
-                                            <Search className="h-3 w-3 text-indigo-600" />
+                                        <div className="h-5 w-5 rounded-full bg-sky-100 dark:bg-blue-950/50 flex items-center justify-center">
+                                            <Search className="h-3 w-3 text-blue-700" />
                                         </div>
                                         <span>@{project.employee?.username || 'you'}</span>
                                     </div>
@@ -300,20 +300,20 @@ const MyProjects = ({ defaultOpenUpload = false }) => {
                                 <div className="flex items-center space-x-2">
                                     {project.liveUrl && (
                                         <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
-                                            className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:scale-110 transition-all">
+                                            className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-sky-400 hover:scale-110 transition-all">
                                             <ExternalLink className="h-4.5 w-4.5" />
                                         </a>
                                     )}
                                     {project.githubUrl && (
                                         <a href={project.githubUrl} target="_blank" rel="noopener noreferrer"
-                                            className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:scale-110 transition-all">
+                                            className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-sky-400 hover:scale-110 transition-all">
                                             <Code className="h-4.5 w-4.5" />
                                         </a>
                                     )}
                                 </div>
-                                <div className="flex items-center space-x-2 bg-indigo-50 dark:bg-indigo-900/20 px-3 py-1.5 rounded-xl border border-indigo-100 dark:border-indigo-800/50">
-                                    <FileCode className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-                                    <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-tighter">
+                                <div className="flex items-center space-x-2 bg-sky-50 dark:bg-blue-950/20 px-3 py-1.5 rounded-xl border border-sky-100 dark:border-blue-900/50">
+                                    <FileCode className="h-4 w-4 text-blue-700 dark:text-sky-400" />
+                                    <span className="text-[10px] font-black text-blue-700 dark:text-sky-400 uppercase tracking-tighter">
                                         {project.files?.length || 0} ITEMS
                                     </span>
                                 </div>
@@ -325,7 +325,7 @@ const MyProjects = ({ defaultOpenUpload = false }) => {
                                 <Calendar className="h-3.5 w-3.5" />
                                 <span>Uploaded {new Date(project.createdAt).toLocaleDateString()}</span>
                             </div>
-                            <button className="text-[10px] font-black text-indigo-500 uppercase tracking-widest hover:underline decoration-2 underline-offset-4">
+                            <button className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline decoration-2 underline-offset-4">
                                 Details
                             </button>
                         </div>

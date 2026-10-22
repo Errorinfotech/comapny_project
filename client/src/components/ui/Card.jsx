@@ -1,7 +1,7 @@
 import React from 'react';
 
 export function Card({ children, className = '', hover = true, ...props }) {
-  const hoverClass = hover ? 'hover:-translate-y-0.5 hover:shadow-xl dark:hover:shadow-2xl dark:hover:shadow-indigo-950/20' : '';
+  const hoverClass = hover ? 'hover:-translate-y-0.5 hover:shadow-xl dark:hover:shadow-2xl dark:hover:shadow-blue-950/20' : '';
   return (
     <div
       className={`glass-card rounded-2xl p-6 transition-all duration-300 ${hoverClass} ${className}`}
