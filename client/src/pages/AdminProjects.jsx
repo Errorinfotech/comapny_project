@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import api, { BASE_URL } from '../api';
 import {
     Folder,
@@ -8,14 +8,19 @@ import {
     Calendar,
     Search,
     User,
-    Briefcase
+    Briefcase,
+    X,
+    FolderOpen,
+    Layers
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
+import { Card, Badge, Button, Input } from '@/components/ui';
 
 const AdminProjects = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const employeeId = searchParams.get('employeeId');
+    const deptId = searchParams.get('dept');
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -23,7 +28,12 @@ const AdminProjects = () => {
     const fetchAllProjects = async () => {
         try {
             setLoading(true);
-            const { data } = await api.get(`/admin/projects${employeeId ? `?employeeId=${employeeId}` : ''}`);
+            const queryParams = new URLSearchParams();
+            if (employeeId) queryParams.append('employeeId', employeeId);
+            if (deptId) queryParams.append('dept', deptId);
+            
+            const queryString = queryParams.toString() ? `?${queryParams.toString()}` : '';
+            const { data } = await api.get(`/admin/projects${queryString}`);
             setProjects(data);
         } catch (err) {
             console.error(err);
@@ -34,7 +44,7 @@ const AdminProjects = () => {
 
     useEffect(() => {
         fetchAllProjects();
-    }, [employeeId]);
+    }, [employeeId, deptId]);
 
     const filteredProjects = projects.filter(p =>
         p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -42,135 +52,180 @@ const AdminProjects = () => {
         p.department?.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    if (loading) return (
-        <div className="flex flex-col items-center justify-center h-64 space-y-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent"></div>
-            <p className="text-slate-500 font-medium">Loading projects...</p>
-        </div>
-    );
+    if (loading) {
+        return (
+            <div className="space-y-6 animate-pulse max-w-7xl mx-auto">
+                <div className="h-10 bg-slate-200 dark:bg-slate-800 rounded-xl w-64" />
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {[1, 2, 3, 4, 5, 6].map((n) => (
+                        <div key={n} className="h-64 bg-slate-200 dark:bg-slate-800 rounded-2xl" />
+                    ))}
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="space-y-8">
-            <div className="flex justify-between items-center">
+        <div className="space-y-8 max-w-7xl mx-auto">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-200/60 dark:border-slate-800/60">
                 <div>
-                    <h1 className="text-3xl font-bold">All Company Projects</h1>
-                    <p className="text-slate-500 mt-2">
-                        {employeeId ? `Showing projects for selected employee.` : 'Oversee all development work across the organization.'}
+                    <div className="flex items-center space-x-2.5">
+                        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                            All Company Projects
+                        </h1>
+                        <Badge variant="primary" size="sm">{filteredProjects.length} Projects</Badge>
+                    </div>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                        {employeeId || deptId
+                            ? 'Filtered portfolio view for selected criteria.'
+                            : 'Oversee and audit all development work across the organization.'}
                     </p>
                 </div>
-                {employeeId && (
-                    <button
+
+                {(employeeId || deptId) && (
+                    <Button
+                        variant="secondary"
+                        size="sm"
                         onClick={() => setSearchParams({})}
-                        className="text-sm font-bold text-indigo-600 hover:text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 px-4 py-2 rounded-xl transition-all"
+                        icon={X}
                     >
                         Clear Filters
-                    </button>
+                    </Button>
                 )}
             </div>
 
-            <div className="flex items-center space-x-4 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                <div className="relative flex-1">
-                    <Search className="absolute left-4 top-3 h-5 w-5 text-slate-400" />
-                    <input
-                        type="text"
-                        placeholder="Search projects, employees, or departments..."
-                        className="w-full bg-transparent border-none pl-12 pr-4 py-2 focus:ring-0 outline-none"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                </div>
+            {/* Search Filter */}
+            <div className="relative max-w-md">
+                <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-slate-400" />
+                <input
+                    type="text"
+                    placeholder="Search by title, author (@employee) or department..."
+                    className="w-full bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs font-medium focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 focus:outline-none text-slate-900 dark:text-white placeholder:text-slate-400 shadow-sm"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            {/* Projects Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredProjects.map((project, index) => (
                     <motion.div
                         key={project._id}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: index * 0.05 }}
-                        className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 overflow-hidden group hover:shadow-2xl transition-all relative"
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.04 }}
                     >
-                        {project.thumbnail && (
-                            <div className="absolute inset-0 z-0">
-                                <img
-                                    src={`${BASE_URL}/uploads/${encodeURIComponent(project.thumbnail)}`}
-                                    alt=""
-                                    className="h-full w-full object-cover opacity-80"
-                                    onError={(e) => {
-                                        console.error('Admin Thumbnail failed to load:', e.target.src);
-                                        if (e.target.src.includes('localhost')) {
-                                            e.target.src = e.target.src.replace('localhost', '127.0.0.1');
-                                        }
-                                    }}
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-white/60 via-white/20 to-transparent dark:from-slate-900/60 dark:via-slate-900/20 dark:to-transparent" />
-                            </div>
-                        )}
-                        <div className="p-5 relative z-10">
-                            <div className="flex justify-between items-start mb-3">
-                                <div className="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 transition-colors">
-                                    <Folder className="h-8 w-8" />
+                        <Card className="p-0 overflow-hidden flex flex-col justify-between h-full group" hover={true}>
+                            {/* Card Media Preview (if thumbnail exists) */}
+                            {project.thumbnail ? (
+                                <div className="h-36 w-full relative overflow-hidden bg-slate-950">
+                                    <img
+                                        src={`${BASE_URL}/uploads/${encodeURIComponent(project.thumbnail)}`}
+                                        alt={project.title}
+                                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80"
+                                        onError={(e) => {
+                                            if (e.target.src.includes('localhost')) {
+                                                e.target.src = e.target.src.replace('localhost', '127.0.0.1');
+                                            }
+                                        }}
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-black/20" />
+                                    <div className="absolute top-3 right-3">
+                                        <Badge variant="default" size="sm" className="bg-black/60 text-white border-white/20 backdrop-blur-md">
+                                            ID: {project._id.slice(-5)}
+                                        </Badge>
+                                    </div>
                                 </div>
-                                <div className="text-right">
-                                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-500">
-                                        Project ID: {project._id.slice(-6)}
-                                    </span>
+                            ) : (
+                                <div className="h-20 w-full bg-gradient-to-tr from-indigo-500/10 via-cyan-500/10 to-transparent p-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-800/60">
+                                    <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-500">
+                                        <FolderOpen className="h-5 w-5" />
+                                    </div>
+                                    <Badge variant="default" size="sm">
+                                        ID: {project._id.slice(-5)}
+                                    </Badge>
+                                </div>
+                            )}
+
+                            {/* Card Content */}
+                            <div className="p-5 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2 line-clamp-1 group-hover:text-indigo-500 transition-colors">
+                                        {project.title}
+                                    </h3>
+
+                                    {/* Author & Dept meta */}
+                                    <div className="flex items-center space-x-3 text-xs text-slate-500 dark:text-slate-400 mb-3 font-medium">
+                                        <div className="flex items-center space-x-1">
+                                            <User className="h-3.5 w-3.5 text-indigo-500" />
+                                            <span>@{project.employee?.username || 'member'}</span>
+                                        </div>
+                                        <span>•</span>
+                                        <div className="flex items-center space-x-1">
+                                            <Briefcase className="h-3.5 w-3.5 text-slate-400" />
+                                            <span>{project.department?.name || 'Global'}</span>
+                                        </div>
+                                    </div>
+
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mb-4">
+                                        {project.description || 'Enterprise project repository and asset storage.'}
+                                    </p>
+                                </div>
+
+                                {/* External Links & Files */}
+                                <div className="pt-3 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between">
+                                    <div className="flex items-center space-x-2">
+                                        {project.liveUrl && (
+                                            <a
+                                                href={project.liveUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                                title="View Live Demo"
+                                            >
+                                                <ExternalLink className="h-4 w-4" />
+                                            </a>
+                                        )}
+                                        {project.githubUrl && (
+                                            <a
+                                                href={project.githubUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                                title="View GitHub Repository"
+                                            >
+                                                <Code className="h-4 w-4" />
+                                            </a>
+                                        )}
+                                    </div>
+
+                                    <Badge variant="cyan" size="sm">
+                                        <FileText className="h-3 w-3 mr-1" />
+                                        {project.files?.length || 0} Files
+                                    </Badge>
                                 </div>
                             </div>
 
-                            <h3 className="text-lg font-bold mb-1 truncate">{project.title}</h3>
-
-                            <div className="flex items-center space-x-4 mb-3 text-xs text-slate-500">
-                                <div className="flex items-center space-x-1">
-                                    <User className="h-3 w-3" />
-                                    <span className="font-medium">@{project.employee?.username}</span>
+                            {/* Card Footer */}
+                            <div className="px-5 py-2.5 bg-slate-50/70 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400 font-medium">
+                                <div className="flex items-center space-x-1.5">
+                                    <Calendar className="h-3 w-3" />
+                                    <span>{new Date(project.createdAt).toLocaleDateString()}</span>
                                 </div>
-                                <div className="flex items-center space-x-1">
-                                    <Briefcase className="h-3 w-3" />
-                                    <span>{project.department?.name || 'Global'}</span>
-                                </div>
+                                <span className="text-indigo-500 font-semibold group-hover:underline">
+                                    View Vault
+                                </span>
                             </div>
-
-                            <p className="text-sm text-slate-400 line-clamp-2 mb-4 h-10">
-                                {project.description || 'No description provided.'}
-                            </p>
-
-                            <div className="flex items-center space-x-3 border-t border-slate-100 dark:border-slate-800 pt-4">
-                                {project.liveUrl && (
-                                    <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 hover:text-indigo-500 transition-all">
-                                        <ExternalLink className="h-4 w-4" />
-                                    </a>
-                                )}
-                                {project.githubUrl && (
-                                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 hover:text-indigo-500 transition-all">
-                                        <Code className="h-4 w-4" />
-                                    </a>
-                                )}
-                                <div className="flex-1"></div>
-                                <div className="flex items-center space-x-1.5 text-xs font-bold text-indigo-500">
-                                    <FileText className="h-4 w-4" />
-                                    <span>{project.files?.length || 0} ITEMS</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="bg-slate-50 dark:bg-slate-800/50 px-5 py-2.5 flex items-center justify-between">
-                            <div className="flex items-center space-x-1.5 text-[10px] font-bold text-slate-400 uppercase">
-                                <Calendar className="h-3 w-3" />
-                                <span>Uploaded {new Date(project.createdAt).toLocaleDateString()}</span>
-                            </div>
-                            <button className="text-[10px] font-bold text-indigo-500 uppercase hover:underline">
-                                Details
-                            </button>
-                        </div>
+                        </Card>
                     </motion.div>
                 ))}
 
                 {filteredProjects.length === 0 && (
-                    <div className="col-span-full py-20 text-center bg-white dark:bg-slate-900 rounded-[3rem] border-4 border-dashed border-slate-100 dark:border-slate-800">
-                        <Folder className="h-16 w-16 text-slate-200 mx-auto mb-4" />
-                        <h3 className="text-2xl font-bold text-slate-400">No Projects Found</h3>
-                        <p className="text-slate-500 mt-2">Adjust your filters or wait for employees to upload work.</p>
+                    <div className="col-span-full py-16 text-center glass-card rounded-2xl">
+                        <Folder className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                        <h3 className="text-base font-bold text-slate-600 dark:text-slate-400">No Projects Found</h3>
+                        <p className="text-xs text-slate-400 mt-1">Try clearing filters or search terms.</p>
                     </div>
                 )}
             </div>

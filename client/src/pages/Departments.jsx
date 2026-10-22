@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../api';
-import { Plus, Briefcase, Trash2, Edit, X } from 'lucide-react';
+import { Plus, Briefcase, Trash2, Edit, Users, FolderOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { Button, Card, Input, Modal, Badge } from '@/components/ui';
 
 const Departments = () => {
     const navigate = useNavigate();
@@ -11,6 +12,7 @@ const Departments = () => {
     const [showModal, setShowModal] = useState(false);
     const [editingDept, setEditingDept] = useState(null);
     const [formData, setFormData] = useState({ name: '', description: '' });
+    const [saving, setSaving] = useState(false);
 
     const fetchDepartments = async () => {
         try {
@@ -29,6 +31,7 @@ const Departments = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSaving(true);
         try {
             if (editingDept) {
                 await api.put(`/admin/departments/${editingDept._id}`, formData);
@@ -39,6 +42,8 @@ const Departments = () => {
             fetchDepartments();
         } catch (err) {
             alert(err.response?.data?.message || 'Error saving department');
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -55,7 +60,7 @@ const Departments = () => {
 
     const handleEdit = (dept) => {
         setEditingDept(dept);
-        setFormData({ name: dept.name, description: dept.description });
+        setFormData({ name: dept.name, description: dept.description || '' });
         setShowModal(true);
     };
 
@@ -65,109 +70,161 @@ const Departments = () => {
         setFormData({ name: '', description: '' });
     };
 
-    return (
-        <div className="space-y-8">
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Departments</h1>
-                    <p className="text-slate-500 mt-2">Manage organization departments and teams.</p>
+    if (loading) {
+        return (
+            <div className="space-y-6 animate-pulse">
+                <div className="h-10 bg-slate-200 dark:bg-slate-800 rounded-xl w-64" />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[1, 2, 3].map((n) => (
+                        <div key={n} className="h-44 bg-slate-200 dark:bg-slate-800 rounded-2xl" />
+                    ))}
                 </div>
-                <button
-                    onClick={() => setShowModal(true)}
-                    className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl transition-all shadow-lg shadow-indigo-500/20"
+            </div>
+        );
+    }
+
+    return (
+        <div className="space-y-8 max-w-7xl mx-auto">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-200/60 dark:border-slate-800/60">
+                <div>
+                    <div className="flex items-center space-x-2.5">
+                        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                            Departments
+                        </h1>
+                        <Badge variant="cyan" size="sm">{departments.length} Total</Badge>
+                    </div>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                        Organize your company divisions and assign projects/employees.
+                    </p>
+                </div>
+
+                <Button
+                    onClick={() => { setEditingDept(null); setShowModal(true); }}
+                    icon={Plus}
                 >
-                    <Plus className="h-5 w-5" />
-                    <span>Add Department</span>
-                </button>
+                    Add Department
+                </Button>
             </div>
 
+            {/* Department Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {departments.map((dept, index) => (
                     <motion.div
                         key={dept._id}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        onClick={() => navigate(`/admin/employees?deptId=${dept._id}`)}
-                        className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 hover:border-indigo-500/50 transition-all group cursor-pointer"
                     >
-                        <div className="flex justify-between items-start mb-4">
-                            <div className="p-3 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">
-                                <Briefcase className="h-6 w-6" />
+                        <Card className="flex flex-col justify-between h-full group">
+                            <div>
+                                <div className="flex items-start justify-between mb-4">
+                                    <div className="p-3 bg-indigo-500/10 text-indigo-500 rounded-xl group-hover:scale-105 transition-transform">
+                                        <Briefcase className="h-5 w-5" />
+                                    </div>
+                                    <div className="flex items-center space-x-1">
+                                        <button
+                                            onClick={() => handleEdit(dept)}
+                                            className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                            title="Edit Department"
+                                        >
+                                            <Edit className="h-4 w-4" />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(dept._id)}
+                                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
+                                            title="Delete Department"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1.5 group-hover:text-indigo-500 transition-colors">
+                                    {dept.name}
+                                </h3>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                                    {dept.description || 'No description provided for this department.'}
+                                </p>
                             </div>
-                            <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-all">
+
+                            <div className="pt-4 mt-6 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-xs">
                                 <button
-                                    onClick={(e) => { e.stopPropagation(); handleEdit(dept); }}
-                                    className="p-2 text-slate-400 hover:text-indigo-500 transition-colors"
+                                    onClick={() => navigate(`/admin/employees?dept=${dept._id}`)}
+                                    className="flex items-center space-x-1.5 text-slate-500 hover:text-indigo-500 font-medium transition-colors"
                                 >
-                                    <Edit className="h-4 w-4" />
+                                    <Users className="h-3.5 w-3.5" />
+                                    <span>View Team</span>
                                 </button>
                                 <button
-                                    onClick={(e) => { e.stopPropagation(); handleDelete(dept._id); }}
-                                    className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+                                    onClick={() => navigate(`/admin/projects?dept=${dept._id}`)}
+                                    className="flex items-center space-x-1.5 text-indigo-500 hover:underline font-semibold"
                                 >
-                                    <Trash2 className="h-4 w-4" />
+                                    <FolderOpen className="h-3.5 w-3.5" />
+                                    <span>Projects</span>
                                 </button>
                             </div>
-                        </div>
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-white">{dept.name}</h3>
-                        <p className="text-sm text-slate-500 mt-1 line-clamp-2">{dept.description || 'No description provided.'}</p>
+                        </Card>
                     </motion.div>
                 ))}
+
+                {departments.length === 0 && (
+                    <div className="col-span-full py-16 text-center glass-card rounded-2xl">
+                        <Briefcase className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                        <h3 className="text-base font-bold text-slate-600 dark:text-slate-400">No departments found</h3>
+                        <p className="text-xs text-slate-400 mt-1 mb-4">Click below to create your first company department</p>
+                        <Button onClick={() => setShowModal(true)} icon={Plus} size="sm">
+                            Add Department
+                        </Button>
+                    </div>
+                )}
             </div>
 
-            {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="bg-white dark:bg-slate-900 w-full max-w-md p-8 rounded-2xl shadow-2xl relative"
-                    >
-                        <button
+            {/* Department Modal */}
+            <Modal
+                isOpen={showModal}
+                onClose={handleCloseModal}
+                title={editingDept ? 'Edit Department' : 'Create New Department'}
+                description="Manage department name and summary details"
+            >
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <Input
+                        label="Department Name"
+                        placeholder="e.g. Full Stack Development, UI/UX Design"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    />
+
+                    <div className="flex flex-col space-y-1.5">
+                        <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                            Description
+                        </label>
+                        <textarea
+                            rows={3}
+                            placeholder="Briefly describe what this department manages..."
+                            className="w-full rounded-xl p-3 text-sm bg-white/80 dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500"
+                            value={formData.description}
+                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        />
+                    </div>
+
+                    <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <Button
+                            variant="secondary"
                             onClick={handleCloseModal}
-                            className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                         >
-                            <X className="h-5 w-5" />
-                        </button>
-                        <h2 className="text-2xl font-bold mb-6 text-slate-900 dark:text-white">{editingDept ? 'Edit Department' : 'New Department'}</h2>
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Name</label>
-                                <input
-                                    type="text"
-                                    className="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none text-slate-900 dark:text-white"
-                                    required
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Description</label>
-                                <textarea
-                                    className="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none h-24 text-slate-900 dark:text-white"
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                />
-                            </div>
-                            <div className="flex space-x-3 pt-4">
-                                <button
-                                    type="button"
-                                    onClick={handleCloseModal}
-                                    className="flex-1 px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="flex-1 px-4 py-3 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-all"
-                                >
-                                    {editingDept ? 'Update' : 'Create'}
-                                </button>
-                            </div>
-                        </form>
-                    </motion.div>
-                </div>
-            )}
+                            Cancel
+                        </Button>
+                        <Button
+                            type="submit"
+                            loading={saving}
+                        >
+                            {editingDept ? 'Save Changes' : 'Create Department'}
+                        </Button>
+                    </div>
+                </form>
+            </Modal>
         </div>
     );
 };
