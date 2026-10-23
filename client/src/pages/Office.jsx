@@ -130,60 +130,52 @@ const Office = () => {
                 value: departments.length,
                 subtext: 'Operational Units',
                 icon: Building2,
-                color: 'text-cyan-600 dark:text-cyan-400',
-                badgeGradient: 'from-cyan-500 via-sky-400 to-cyan-300',
-                badgeShadow: 'shadow-cyan-500/35',
-                badgeRing: 'ring-cyan-400/20',
-                glowColor: 'bg-cyan-400',
-                hoverBorder: 'hover:border-cyan-300/80 dark:hover:border-cyan-500/60',
-                hoverShadow: 'hover:shadow-cyan-500/15',
-                trendText: 'Live & Operational',
-                trendColor: 'text-cyan-700 dark:text-cyan-300 bg-cyan-50 dark:bg-cyan-950/40 border-cyan-200/60 dark:border-cyan-800/50'
+                cardBg: 'bg-gradient-to-br from-white via-[#fff4f4] to-[#ffebeb] dark:from-[#1c0d10] dark:via-[#261217] dark:to-[#0a0507] border-[#ffd5d5] dark:border-[#52202a]',
+                iconBg: 'bg-[#FF6B6B] shadow-md shadow-[#FF6B6B]/30 text-white',
+                badgeText: 'Operational',
+                badgeStyle: 'bg-[#fff0f0] dark:bg-[#33141a]/80 text-[#e04848] dark:text-[#ff9999] border-[#ffc2c2] dark:border-[#5c242f]',
+                glowColor: 'bg-[#FF6B6B]',
+                hoverBorder: 'hover:border-[#FF6B6B]/70 dark:hover:border-[#FF6B6B]/60',
+                hoverShadow: 'hover:shadow-xl hover:shadow-[#FF6B6B]/15'
             },
             {
                 name: 'Reporting Managers',
                 value: departmentMap.length,
                 subtext: 'Supervisory Leads',
                 icon: Layers3,
-                color: 'text-blue-600 dark:text-blue-400',
-                badgeGradient: 'from-[#1e3a8a] via-[#2563eb] to-[#38bdf8]',
-                badgeShadow: 'shadow-blue-600/35',
-                badgeRing: 'ring-blue-500/20',
-                glowColor: 'bg-blue-500',
-                hoverBorder: 'hover:border-blue-300/80 dark:hover:border-blue-500/60',
-                hoverShadow: 'hover:shadow-blue-500/15',
-                trendText: 'Hierarchy Synced',
-                trendColor: 'text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40 border-blue-200/60 dark:border-blue-800/50'
+                cardBg: 'bg-gradient-to-br from-white via-[#fffdf2] to-[#fff8e3] dark:from-[#1c1708] dark:via-[#261f0a] dark:to-[#0a0802] border-[#ffe8a8] dark:border-[#524114]',
+                iconBg: 'bg-[#FFD166] shadow-md shadow-[#FFD166]/35 text-white',
+                badgeText: 'Hierarchy Synced',
+                badgeStyle: 'bg-[#fff9e6] dark:bg-[#33280c]/80 text-[#b58000] dark:text-[#ffe082] border-[#ffdf85] dark:border-[#5c4714]',
+                glowColor: 'bg-[#FFD166]',
+                hoverBorder: 'hover:border-[#FFD166]/80 dark:hover:border-[#FFD166]/60',
+                hoverShadow: 'hover:shadow-xl hover:shadow-[#FFD166]/15'
             },
             {
                 name: 'Active Development Units',
                 value: activeDepartments,
                 subtext: 'In Production',
                 icon: GitBranch,
-                color: 'text-emerald-600 dark:text-emerald-400',
-                badgeGradient: 'from-emerald-600 via-emerald-400 to-teal-300',
-                badgeShadow: 'shadow-emerald-500/35',
-                badgeRing: 'ring-emerald-400/20',
-                glowColor: 'bg-emerald-400',
-                hoverBorder: 'hover:border-emerald-300/80 dark:hover:border-emerald-500/60',
-                hoverShadow: 'hover:shadow-emerald-500/15',
-                trendText: '100% Active Work',
-                trendColor: 'text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200/60 dark:border-emerald-800/50'
+                cardBg: 'bg-gradient-to-br from-white via-[#f0fdf9] to-[#e4faf3] dark:from-[#061c16] dark:via-[#09261e] dark:to-[#030d0a] border-[#b5f2e1] dark:border-[#134d3c]',
+                iconBg: 'bg-[#06D6A0] shadow-md shadow-[#06D6A0]/30 text-white',
+                badgeText: '100% Active Work',
+                badgeStyle: 'bg-[#e8fbf5] dark:bg-[#0c362a]/80 text-[#048764] dark:text-[#5cebc7] border-[#a1ebd6] dark:border-[#175c47]',
+                glowColor: 'bg-[#06D6A0]',
+                hoverBorder: 'hover:border-[#06D6A0]/80 dark:hover:border-[#06D6A0]/60',
+                hoverShadow: 'hover:shadow-xl hover:shadow-[#06D6A0]/15'
             },
             {
                 name: 'Office Workforce',
                 value: employees.length,
                 subtext: 'Assigned Employees',
                 icon: Users,
-                color: 'text-amber-600 dark:text-amber-400',
-                badgeGradient: 'from-amber-500 via-orange-400 to-yellow-300',
-                badgeShadow: 'shadow-amber-500/35',
-                badgeRing: 'ring-amber-400/20',
-                glowColor: 'bg-amber-400',
-                hoverBorder: 'hover:border-amber-300/80 dark:hover:border-amber-500/60',
-                hoverShadow: 'hover:shadow-amber-500/15',
-                trendText: 'Full Capacity',
-                trendColor: 'text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border-amber-200/60 dark:border-amber-800/50'
+                cardBg: 'bg-gradient-to-br from-white via-[#f0f8fb] to-[#e4f2f7] dark:from-[#071620] dark:via-[#0a202e] dark:to-[#03090d] border-[#b8dfec] dark:border-[#123e54]',
+                iconBg: 'bg-[#118AB2] shadow-md shadow-[#118AB2]/30 text-white',
+                badgeText: 'Full Capacity',
+                badgeStyle: 'bg-[#e6f4f8] dark:bg-[#0e2c3d]/80 text-[#0b5f7b] dark:text-[#6ec8e6] border-[#a5d6e6] dark:border-[#1a516e]',
+                glowColor: 'bg-[#118AB2]',
+                hoverBorder: 'hover:border-[#118AB2]/80 dark:hover:border-[#118AB2]/60',
+                hoverShadow: 'hover:shadow-xl hover:shadow-[#118AB2]/15'
             }
         ];
     }, [departments.length, departmentMap, employees.length]);
@@ -430,56 +422,50 @@ const Office = () => {
                 </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 sm:gap-6">
                 {officeStats.map((stat, index) => (
                     <motion.div
                         key={stat.name}
-                        initial={{ opacity: 0, y: 18 }}
+                        initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.08, duration: 0.35 }}
-                        className={`group relative overflow-hidden rounded-3xl p-6 bg-white/90 dark:bg-[#070e28]/90 backdrop-blur-xl border border-sky-100/90 dark:border-[#14235a] shadow-lg shadow-sky-950/5 transition-all duration-300 hover:-translate-y-1.5 ${stat.hoverBorder} ${stat.hoverShadow} cursor-default`}
+                        whileHover={{ y: -6, scale: 1.015 }}
+                        whileTap={{ scale: 0.985 }}
+                        transition={{ delay: index * 0.08, duration: 0.35, ease: "easeOut" }}
+                        className={`group relative overflow-hidden rounded-[26px] p-6 border ${stat.cardBg} ${stat.hoverBorder} ${stat.hoverShadow} shadow-xs backdrop-blur-xl transition-all duration-300 cursor-pointer select-none`}
                     >
-                        {/* Soft Ambient Radial Corner Glow */}
+                        {/* Soft Ambient Radial Corner Glow on Hover */}
                         <div
-                            className={`pointer-events-none absolute -right-6 -top-6 w-28 h-28 rounded-full blur-2xl opacity-25 group-hover:opacity-45 transition-opacity duration-300 ${stat.glowColor}`}
+                            className={`pointer-events-none absolute -right-6 -top-6 w-28 h-28 rounded-full blur-2xl opacity-15 group-hover:opacity-40 transition-opacity duration-300 ${stat.glowColor}`}
                         />
 
-                        <div className="relative z-10 flex items-start justify-between">
-                            <div className="flex-1 pr-3">
-                                <p className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                                    {stat.name}
-                                </p>
-                                <p className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-2.5">
-                                    {stat.value}
-                                </p>
-                                <p className="text-[11px] font-medium text-slate-400 dark:text-slate-500 mt-1">
-                                    {stat.subtext}
-                                </p>
+                        {/* Top Row: Vibrant Solid Circular Icon + Status Tag + Animated Chevron */}
+                        <div className="relative z-10 flex items-center justify-between">
+                            {/* Solid Vibrant Circular Icon matching reference design */}
+                            <div className={`w-12 h-12 rounded-full ${stat.iconBg} flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-110`}>
+                                <stat.icon className="h-6 w-6 drop-shadow-sm" />
                             </div>
 
-                            {/* 3D Glossy Squircle Badge Icon */}
-                            <div className={`shrink-0 w-13 h-13 rounded-2xl bg-gradient-to-tr ${stat.badgeGradient} ${stat.badgeShadow} ring-4 ${stat.badgeRing} border border-white/50 flex items-center justify-center text-white shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
-                                <stat.icon className="h-6 w-6 text-white drop-shadow-md" />
-                            </div>
+                            {/* Status Tag */}
+                            <span className={`px-2.5 py-1 rounded-full text-[10.5px] font-bold border shadow-2xs ${stat.badgeStyle}`}>
+                                {stat.badgeText}
+                            </span>
                         </div>
 
-                        {/* Bottom Status Pill & Micro Sparkline Wave */}
-                        <div className="relative z-10 mt-5 pt-3.5 border-t border-slate-100/90 dark:border-slate-800/80 flex items-center justify-between">
-                            <div className={`px-2.5 py-1 rounded-full text-[10.5px] font-bold border flex items-center gap-1.5 shadow-2xs ${stat.trendColor}`}>
-                                <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-                                <span>{stat.trendText}</span>
-                            </div>
+                        {/* Metric Counter */}
+                        <div className="relative z-10 mt-4 flex items-baseline">
+                            <span className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                                {stat.value}
+                            </span>
+                        </div>
 
-                            {/* Decorative Wave Sparkline */}
-                            <svg className="w-16 h-5 opacity-40 group-hover:opacity-80 transition-opacity" viewBox="0 0 70 20" fill="none">
-                                <path
-                                    d="M2 16 Q 18 4, 35 12 T 68 6"
-                                    stroke="currentColor"
-                                    strokeWidth="2.2"
-                                    strokeLinecap="round"
-                                    className={stat.color}
-                                />
-                            </svg>
+                        {/* Title & Subtext */}
+                        <div className="relative z-10 mt-1">
+                            <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight leading-snug">
+                                {stat.name}
+                            </h3>
+                            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">
+                                {stat.subtext}
+                            </p>
                         </div>
                     </motion.div>
                 ))}
@@ -501,72 +487,76 @@ const Office = () => {
                         {departmentMap.map((department, index) => (
                             <motion.div
                                 key={department._id}
-                                initial={{ opacity: 0, x: -12 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: index * 0.06 }}
-                                className="rounded-2xl border border-slate-200 dark:border-slate-800 p-5 bg-slate-50/80 dark:bg-slate-950/40"
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                whileHover={{ y: -4 }}
+                                transition={{ delay: index * 0.06, duration: 0.3 }}
+                                className="group relative overflow-hidden rounded-[26px] border border-sky-100/90 dark:border-[#172b66] p-5 sm:p-6 bg-white dark:bg-[#070e28] shadow-lg shadow-sky-950/5 dark:shadow-black/40 hover:shadow-2xl hover:shadow-blue-500/10 hover:border-blue-300/80 dark:hover:border-blue-500/60 transition-all duration-300 select-none"
                             >
-                                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                                    <div>
-                                        <div className="flex items-center space-x-3">
-                                            <div className="p-2.5 rounded-xl bg-sky-100 dark:bg-blue-950/30 text-blue-700 dark:text-sky-400">
-                                                <Briefcase className="h-5 w-5" />
-                                            </div>
-                                            <div>
-                                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">{department.name}</h3>
-                                                <p className="text-sm text-slate-500">
-                                                    {department.description || 'Department structure is configured and available for new work.'}
-                                                </p>
-                                            </div>
+                                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                    <div className="flex items-center space-x-3.5">
+                                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#1e3a8a] to-[#2563eb] text-white shadow-md shadow-blue-600/25 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105">
+                                            <Briefcase className="h-6 w-6 text-white drop-shadow-xs" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-lg font-extrabold text-slate-900 dark:text-white tracking-tight">{department.name}</h3>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
+                                                {department.description || 'Department structure is configured and available for new work.'}
+                                            </p>
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-3 gap-3 text-center min-w-full md:min-w-[290px]">
-                                        <div className="rounded-xl bg-white dark:bg-slate-900 px-3 py-3 border border-slate-200 dark:border-slate-800">
-                                            <p className="text-xs text-slate-500">Employees</p>
-                                            <p className="text-lg font-bold text-slate-900 dark:text-white">{department.employees.length}</p>
+                                    <div className="grid grid-cols-3 gap-2.5 text-center min-w-full md:min-w-[290px]">
+                                        <div className="rounded-2xl bg-[#f8fbfe] dark:bg-[#0a1438] px-3 py-2.5 border border-sky-100/80 dark:border-[#14235a] shadow-2xs">
+                                            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Employees</p>
+                                            <p className="text-lg font-black text-slate-900 dark:text-white mt-0.5">{department.employees.length}</p>
                                         </div>
-                                        <div className="rounded-xl bg-white dark:bg-slate-900 px-3 py-3 border border-slate-200 dark:border-slate-800">
-                                            <p className="text-xs text-slate-500">Projects</p>
-                                            <p className="text-lg font-bold text-slate-900 dark:text-white">{department.projects.length}</p>
+                                        <div className="rounded-2xl bg-[#f8fbfe] dark:bg-[#0a1438] px-3 py-2.5 border border-sky-100/80 dark:border-[#14235a] shadow-2xs">
+                                            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Projects</p>
+                                            <p className="text-lg font-black text-slate-900 dark:text-white mt-0.5">{department.projects.length}</p>
                                         </div>
-                                        <div className="rounded-xl bg-white dark:bg-slate-900 px-3 py-3 border border-slate-200 dark:border-slate-800">
-                                            <p className="text-xs text-slate-500">Status</p>
-                                            <p className="text-sm font-bold text-emerald-500">
-                                                {department.projects.length > 0 ? 'Active' : 'Stable'}
-                                            </p>
+                                        <div className="rounded-2xl bg-[#f8fbfe] dark:bg-[#0a1438] px-3 py-2.5 border border-sky-100/80 dark:border-[#14235a] shadow-2xs flex flex-col justify-center items-center">
+                                            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Status</p>
+                                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold border shadow-2xs mt-0.5 ${
+                                                department.projects.length > 0 
+                                                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60'
+                                                    : 'bg-sky-50 dark:bg-blue-950/60 text-blue-700 dark:text-sky-300 border-sky-200/80 dark:border-[#14235a]'
+                                            }`}>
+                                                <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+                                                <span>{department.projects.length > 0 ? 'Active' : 'Stable'}</span>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                                    <div className="rounded-xl border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900">
-                                        <p className="text-sm font-semibold text-slate-900 dark:text-white mb-3">Team Members</p>
-                                        <div className="flex flex-wrap gap-2">
+                                <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3.5">
+                                    <div className="rounded-2xl border border-sky-100/80 dark:border-[#14235a] p-4 bg-[#f8fbfe]/70 dark:bg-[#0a1438]/50 shadow-2xs">
+                                        <p className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5">Team Members</p>
+                                        <div className="flex flex-wrap gap-1.5">
                                             {department.employees.length > 0 ? (
                                                 department.employees.map((employee) => (
                                                     <span
                                                         key={employee._id}
-                                                        className="px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+                                                        className="px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-[#070e28] text-blue-700 dark:text-sky-300 border border-sky-200/80 dark:border-[#14235a] shadow-2xs"
                                                     >
                                                         @{employee.username}
                                                     </span>
                                                 ))
                                             ) : (
-                                                <span className="text-sm text-slate-500">No employees assigned yet.</span>
+                                                <span className="text-xs text-slate-400">No employees assigned yet.</span>
                                             )}
                                         </div>
                                     </div>
 
-                                    <div className="rounded-xl border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900">
-                                        <p className="text-sm font-semibold text-slate-900 dark:text-white mb-3">Development Scope</p>
+                                    <div className="rounded-2xl border border-sky-100/80 dark:border-[#14235a] p-4 bg-[#f8fbfe]/70 dark:bg-[#0a1438]/50 shadow-2xs">
+                                        <p className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5">Development Scope</p>
                                         <div className="space-y-2">
                                             {department.projects.length > 0 ? (
                                                 department.projects.slice(0, 3).map((project) => (
-                                                    <div key={project._id} className="rounded-xl border border-slate-100 dark:border-slate-800 p-3">
+                                                    <div key={project._id} className="rounded-xl border border-sky-100 dark:border-[#14235a] p-3 bg-white dark:bg-[#070e28] shadow-2xs hover:border-sky-300 transition-colors">
                                                         <div className="flex items-center justify-between gap-3 text-sm">
-                                                            <span className="text-slate-700 dark:text-slate-200 truncate pr-3 font-medium">{project.title}</span>
-                                                            <span className="text-xs text-slate-500">by @{project.employee?.username || 'team'}</span>
+                                                            <span className="text-slate-800 dark:text-slate-200 truncate pr-3 font-semibold text-xs">{project.title}</span>
+                                                            <span className="text-[11px] text-slate-400">by @{project.employee?.username || 'team'}</span>
                                                         </div>
                                                         <div className="mt-2 flex items-center gap-2 flex-wrap">
                                                             {project.liveUrl && (
@@ -574,18 +564,18 @@ const Office = () => {
                                                                     href={project.liveUrl}
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
-                                                                    className="inline-flex items-center space-x-1 text-xs font-semibold text-blue-600 hover:text-sky-400"
+                                                                    className="inline-flex items-center space-x-1 text-xs font-bold text-blue-600 hover:text-sky-400"
                                                                 >
                                                                     <ArrowUpRight className="h-3.5 w-3.5" />
                                                                     <span>Live Link</span>
                                                                 </a>
                                                             )}
-                                                            <span className="text-xs text-slate-500">{project.files?.length || 0} files</span>
+                                                            <span className="text-[11px] text-slate-400">{project.files?.length || 0} files</span>
                                                         </div>
                                                     </div>
                                                 ))
                                             ) : (
-                                                <span className="text-sm text-slate-500">No development items linked yet.</span>
+                                                <span className="text-xs text-slate-400">No development items linked yet.</span>
                                             )}
                                         </div>
                                     </div>

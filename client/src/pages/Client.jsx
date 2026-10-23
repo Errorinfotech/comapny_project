@@ -414,34 +414,54 @@ const Client = () => {
             {
                 name: 'Commercial Sectors',
                 value: totalTypes,
-                detail: 'Active Industry Verticals',
-                pill: `${totalTypes} Verticals Cataloged`,
+                subtext: 'Active Industry Verticals',
+                badgeText: `${totalTypes} Verticals Cataloged`,
                 icon: Building2,
-                accent: 'text-blue-600 dark:text-sky-400'
+                cardBg: 'bg-gradient-to-br from-white via-[#f0f4ff] to-[#e1e9ff] dark:from-[#0d1633] dark:via-[#111e47] dark:to-[#060b1e] border-[#c7d7fe] dark:border-[#22356b]',
+                iconBg: 'bg-[#3b82f6] shadow-md shadow-[#3b82f6]/30 text-white',
+                badgeStyle: 'bg-[#e8efff] dark:bg-[#1a2954] text-[#2563eb] dark:text-[#93b4fd] border-[#bfdbfe] dark:border-[#253e7a]',
+                glowColor: 'bg-[#3b82f6]',
+                hoverBorder: 'hover:border-[#3b82f6]/70 dark:hover:border-[#3b82f6]/60',
+                hoverShadow: 'hover:shadow-xl hover:shadow-[#3b82f6]/15'
             },
             {
                 name: 'Business Sub-Types',
                 value: totalSubtypes,
-                detail: 'Classified Deliverable Units',
-                pill: `${totalSubtypes} Sub-Types Defined`,
+                subtext: 'Classified Deliverable Units',
+                badgeText: `${totalSubtypes} Sub-Types Defined`,
                 icon: Briefcase,
-                accent: 'text-sky-600 dark:text-sky-300'
+                cardBg: 'bg-gradient-to-br from-white via-[#f0fdf4] to-[#dcfce7] dark:from-[#091f14] dark:via-[#0e2c1c] dark:to-[#040e08] border-[#bbf7d0] dark:border-[#164e2e]',
+                iconBg: 'bg-[#10b981] shadow-md shadow-[#10b981]/30 text-white',
+                badgeStyle: 'bg-[#dcfce7] dark:bg-[#143d26] text-[#059669] dark:text-[#86efac] border-[#86efac] dark:border-[#1d5936]',
+                glowColor: 'bg-[#10b981]',
+                hoverBorder: 'hover:border-[#10b981]/70 dark:hover:border-[#10b981]/60',
+                hoverShadow: 'hover:shadow-xl hover:shadow-[#10b981]/15'
             },
             {
                 name: 'Active Client Portals',
                 value: configuredCount,
-                detail: 'Configured Enterprise Hubs',
-                pill: `${configuredCount} Active ${configuredCount === 1 ? 'Hub' : 'Hubs'}`,
+                subtext: 'Configured Enterprise Hubs',
+                badgeText: `${configuredCount} Active ${configuredCount === 1 ? 'Hub' : 'Hubs'}`,
                 icon: Layers3,
-                accent: 'text-emerald-600 dark:text-emerald-400'
+                cardBg: 'bg-gradient-to-br from-white via-[#faf5ff] to-[#f3e8ff] dark:from-[#170e2b] dark:via-[#1f133b] dark:to-[#080410] border-[#e9d5ff] dark:border-[#3b2066]',
+                iconBg: 'bg-[#8b5cf6] shadow-md shadow-[#8b5cf6]/30 text-white',
+                badgeStyle: 'bg-[#f3e8ff] dark:bg-[#2c194d] text-[#7c3aed] dark:text-[#d8b4fe] border-[#d8b4fe] dark:border-[#4c2880]',
+                glowColor: 'bg-[#8b5cf6]',
+                hoverBorder: 'hover:border-[#8b5cf6]/70 dark:hover:border-[#8b5cf6]/60',
+                hoverShadow: 'hover:shadow-xl hover:shadow-[#8b5cf6]/15'
             },
             {
                 name: 'Live Deliverables',
                 value: totalLiveLinks,
-                detail: 'Encrypted Gateway Links',
-                pill: `${totalLiveLinks} Verified ${totalLiveLinks === 1 ? 'Link' : 'Links'}`,
+                subtext: 'Encrypted Gateway Links',
+                badgeText: `${totalLiveLinks} Verified ${totalLiveLinks === 1 ? 'Link' : 'Links'}`,
                 icon: Sparkles,
-                accent: 'text-amber-600 dark:text-amber-400'
+                cardBg: 'bg-gradient-to-br from-white via-[#fffbeb] to-[#fef3c7] dark:from-[#211a07] dark:via-[#2b220a] dark:to-[#0a0802] border-[#fde68a] dark:border-[#524114]',
+                iconBg: 'bg-[#f59e0b] shadow-md shadow-[#f59e0b]/30 text-white',
+                badgeStyle: 'bg-[#fef3c7] dark:bg-[#382b0b] text-[#d97706] dark:text-[#fcd34d] border-[#fcd34d] dark:border-[#5e4712]',
+                glowColor: 'bg-[#f59e0b]',
+                hoverBorder: 'hover:border-[#f59e0b]/70 dark:hover:border-[#f59e0b]/60',
+                hoverShadow: 'hover:shadow-xl hover:shadow-[#f59e0b]/15'
             }
         ];
     }, [businessTypes, clientLinks]);
@@ -505,33 +525,51 @@ const Client = () => {
                 </div>
             </div>
 
-            {/* Linear / Stripe Style Precision Telemetry Strip */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200/70 dark:divide-[#14235a] bg-white dark:bg-[#070e28] rounded-2xl border border-slate-200/80 dark:border-[#14235a] shadow-xs overflow-hidden">
-                {stats.map((stat) => (
-                    <div
+            {/* Precision Telemetry KPI Cards Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 sm:gap-6">
+                {stats.map((stat, index) => (
+                    <motion.div
                         key={stat.name}
-                        className="p-3.5 sm:p-4.5 transition-colors hover:bg-slate-50/50 dark:hover:bg-white/[0.02]"
+                        initial={{ opacity: 0, y: 18 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        whileHover={{ y: -6, scale: 1.015 }}
+                        whileTap={{ scale: 0.985 }}
+                        transition={{ delay: index * 0.08, duration: 0.35, ease: "easeOut" }}
+                        className={`group relative overflow-hidden rounded-[26px] p-6 border ${stat.cardBg} ${stat.hoverBorder} ${stat.hoverShadow} shadow-xs backdrop-blur-xl transition-all duration-300 cursor-pointer select-none`}
                     >
-                        <div className="flex items-center justify-between">
-                            <p className="text-[10.5px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                                {stat.name}
-                            </p>
-                            <div className="w-6 h-6 rounded-lg bg-sky-50 dark:bg-[#0a1438] border border-sky-100 dark:border-[#14235a] flex items-center justify-center">
-                                <stat.icon className={`h-3.5 w-3.5 ${stat.accent}`} />
+                        {/* Soft Ambient Radial Corner Glow on Hover */}
+                        <div
+                            className={`pointer-events-none absolute -right-6 -top-6 w-28 h-28 rounded-full blur-2xl opacity-15 group-hover:opacity-40 transition-opacity duration-300 ${stat.glowColor}`}
+                        />
+
+                        {/* Top Row: Vibrant Solid Circular Icon + Status Tag */}
+                        <div className="relative z-10 flex items-center justify-between">
+                            <div className={`w-12 h-12 rounded-full ${stat.iconBg} flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-110`}>
+                                <stat.icon className="h-6 w-6 drop-shadow-sm" />
                             </div>
-                        </div>
-                        <div className="mt-2 flex items-baseline justify-between gap-2">
-                            <p className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight font-mono">
-                                {stat.value}
-                            </p>
-                            <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 truncate">
-                                {stat.pill}
+
+                            <span className={`px-2.5 py-1 rounded-full text-[10.5px] font-bold border shadow-2xs ${stat.badgeStyle}`}>
+                                {stat.badgeText}
                             </span>
                         </div>
-                        <p className="text-[10.5px] font-medium text-slate-400 dark:text-slate-500 mt-0.5">
-                            {stat.detail}
-                        </p>
-                    </div>
+
+                        {/* Metric Counter */}
+                        <div className="relative z-10 mt-4 flex items-baseline">
+                            <span className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                                {stat.value}
+                            </span>
+                        </div>
+
+                        {/* Title & Subtext */}
+                        <div className="relative z-10 mt-1">
+                            <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight leading-snug">
+                                {stat.name}
+                            </h3>
+                            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">
+                                {stat.subtext}
+                            </p>
+                        </div>
+                    </motion.div>
                 ))}
             </div>
 
