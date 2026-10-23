@@ -130,52 +130,40 @@ const Office = () => {
                 value: departments.length,
                 subtext: 'Operational Units',
                 icon: Building2,
-                cardBg: 'bg-gradient-to-br from-white via-[#fff7f7] to-[#fff0f0] dark:from-[#1c0d10] dark:via-[#261217] dark:to-[#0a0507] border-[#ffe4e4] dark:border-[#52202a]',
-                iconBg: 'bg-[#FF6B6B] shadow-md shadow-[#FF6B6B]/25 text-white',
+                iconStyle: 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400',
                 badgeText: 'Operational',
-                badgeStyle: 'bg-[#fff0f0] dark:bg-[#33141a]/80 text-[#e04848] dark:text-[#ff9999] border-[#ffc2c2] dark:border-[#5c242f]',
-                glowColor: 'bg-[#FF6B6B]',
-                hoverBorder: 'hover:border-[#FF6B6B]/40 dark:hover:border-[#FF6B6B]/40',
-                hoverShadow: 'hover:shadow-lg hover:shadow-[#FF6B6B]/10'
+                badgeStyle: 'bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200/60 dark:border-blue-900/50',
+                hoverBorder: 'hover:border-blue-300 dark:hover:border-blue-700/60'
             },
             {
                 name: 'Reporting Managers',
                 value: departmentMap.length,
                 subtext: 'Supervisory Leads',
                 icon: Layers3,
-                cardBg: 'bg-gradient-to-br from-white via-[#fffef7] to-[#fff9eb] dark:from-[#1c1708] dark:via-[#261f0a] dark:to-[#0a0802] border-[#ffeed0] dark:border-[#524114]',
-                iconBg: 'bg-[#FFD166] shadow-md shadow-[#FFD166]/25 text-white',
+                iconStyle: 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400',
                 badgeText: 'Hierarchy Synced',
-                badgeStyle: 'bg-[#fff9e6] dark:bg-[#33280c]/80 text-[#b58000] dark:text-[#ffe082] border-[#ffdf85] dark:border-[#5c4714]',
-                glowColor: 'bg-[#FFD166]',
-                hoverBorder: 'hover:border-[#FFD166]/40 dark:hover:border-[#FFD166]/40',
-                hoverShadow: 'hover:shadow-lg hover:shadow-[#FFD166]/10'
+                badgeStyle: 'bg-indigo-50/80 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border-indigo-200/60 dark:border-indigo-900/50',
+                hoverBorder: 'hover:border-indigo-300 dark:hover:border-indigo-700/60'
             },
             {
                 name: 'Active Development Units',
                 value: activeDepartments,
                 subtext: 'In Production',
                 icon: GitBranch,
-                cardBg: 'bg-gradient-to-br from-white via-[#f5fdfa] to-[#edfcf7] dark:from-[#061c16] dark:via-[#09261e] dark:to-[#030d0a] border-[#ccf6ea] dark:border-[#134d3c]',
-                iconBg: 'bg-[#06D6A0] shadow-md shadow-[#06D6A0]/25 text-white',
+                iconStyle: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400',
                 badgeText: '100% Active Work',
-                badgeStyle: 'bg-[#e8fbf5] dark:bg-[#0c362a]/80 text-[#048764] dark:text-[#5cebc7] border-[#a1ebd6] dark:border-[#175c47]',
-                glowColor: 'bg-[#06D6A0]',
-                hoverBorder: 'hover:border-[#06D6A0]/40 dark:hover:border-[#06D6A0]/40',
-                hoverShadow: 'hover:shadow-lg hover:shadow-[#06D6A0]/10'
+                badgeStyle: 'bg-emerald-50/80 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-900/50',
+                hoverBorder: 'hover:border-emerald-300 dark:hover:border-emerald-700/60'
             },
             {
                 name: 'Office Workforce',
                 value: employees.length,
                 subtext: 'Assigned Employees',
                 icon: Users,
-                cardBg: 'bg-gradient-to-br from-white via-[#f5f9fc] to-[#edf5f9] dark:from-[#071620] dark:via-[#0a202e] dark:to-[#03090d] border-[#cbe4f0] dark:border-[#123e54]',
-                iconBg: 'bg-[#118AB2] shadow-md shadow-[#118AB2]/25 text-white',
+                iconStyle: 'bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400',
                 badgeText: 'Full Capacity',
-                badgeStyle: 'bg-[#e6f4f8] dark:bg-[#0e2c3d]/80 text-[#0b5f7b] dark:text-[#6ec8e6] border-[#a5d6e6] dark:border-[#1a516e]',
-                glowColor: 'bg-[#118AB2]',
-                hoverBorder: 'hover:border-[#118AB2]/40 dark:hover:border-[#118AB2]/40',
-                hoverShadow: 'hover:shadow-lg hover:shadow-[#118AB2]/10'
+                badgeStyle: 'bg-amber-50/80 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200/60 dark:border-amber-900/50',
+                hoverBorder: 'hover:border-amber-300 dark:hover:border-amber-700/60'
             }
         ];
     }, [departments.length, departmentMap, employees.length]);
@@ -364,48 +352,41 @@ const Office = () => {
                 </div>
             )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
                 {officeStats.map((stat, index) => (
                     <motion.div
                         key={stat.name}
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
-                        whileHover={{ y: -6, scale: 1.015 }}
-                        whileTap={{ scale: 0.985 }}
-                        transition={{ delay: index * 0.08, duration: 0.35, ease: "easeOut" }}
-                        className={`group relative overflow-hidden rounded-[26px] p-6 border ${stat.cardBg} ${stat.hoverBorder} ${stat.hoverShadow} shadow-xs backdrop-blur-xl transition-all duration-300 cursor-pointer select-none`}
+                        whileHover={{ y: -3 }}
+                        transition={{ delay: index * 0.05, duration: 0.25, ease: "easeOut" }}
+                        className={`group relative overflow-hidden rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-md ${stat.hoverBorder} transition-all duration-200 select-none`}
                     >
-                        {/* Soft Ambient Radial Corner Glow on Hover */}
-                        <div
-                            className={`pointer-events-none absolute -right-6 -top-6 w-32 h-32 rounded-full blur-3xl opacity-5 group-hover:opacity-15 transition-opacity duration-300 ${stat.glowColor}`}
-                        />
-
-                        {/* Top Row: Vibrant Solid Circular Icon + Status Tag + Animated Chevron */}
-                        <div className="relative z-10 flex items-center justify-between">
-                            {/* Solid Vibrant Circular Icon matching reference design */}
-                            <div className={`w-12 h-12 rounded-full ${stat.iconBg} flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-110`}>
-                                <stat.icon className="h-6 w-6 drop-shadow-sm" />
+                        {/* Top Row: Icon + Status Tag */}
+                        <div className="flex items-center justify-between">
+                            <div className={`w-11 h-11 rounded-xl ${stat.iconStyle} flex items-center justify-center transition-transform duration-200 group-hover:scale-105`}>
+                                <stat.icon className="h-5 w-5" />
                             </div>
 
-                            {/* Status Tag */}
-                            <span className={`px-2.5 py-1 rounded-full text-[10.5px] font-bold border shadow-2xs ${stat.badgeStyle}`}>
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${stat.badgeStyle}`}>
+                                <span className="w-1.5 h-1.5 rounded-full bg-current opacity-80" />
                                 {stat.badgeText}
                             </span>
                         </div>
 
                         {/* Metric Counter */}
-                        <div className="relative z-10 mt-4 flex items-baseline">
-                            <span className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                        <div className="mt-4">
+                            <span className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
                                 {stat.value}
                             </span>
                         </div>
 
                         {/* Title & Subtext */}
-                        <div className="relative z-10 mt-1">
-                            <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight leading-snug">
+                        <div className="mt-1">
+                            <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100 tracking-tight">
                                 {stat.name}
                             </h3>
-                            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                                 {stat.subtext}
                             </p>
                         </div>
