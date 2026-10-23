@@ -418,11 +418,11 @@ const Client = () => {
                 badgeText: `${totalTypes} Verticals Cataloged`,
                 icon: Building2,
                 cardBg: 'bg-gradient-to-br from-white via-[#f0f4ff] to-[#e1e9ff] dark:from-[#0d1633] dark:via-[#111e47] dark:to-[#060b1e] border-[#c7d7fe] dark:border-[#22356b]',
-                iconBg: 'bg-[#3b82f6] shadow-md shadow-[#3b82f6]/30 text-white',
+                iconBg: 'bg-[#3b82f6] shadow-md shadow-[#3b82f6]/25 text-white',
                 badgeStyle: 'bg-[#e8efff] dark:bg-[#1a2954] text-[#2563eb] dark:text-[#93b4fd] border-[#bfdbfe] dark:border-[#253e7a]',
                 glowColor: 'bg-[#3b82f6]',
-                hoverBorder: 'hover:border-[#3b82f6]/70 dark:hover:border-[#3b82f6]/60',
-                hoverShadow: 'hover:shadow-xl hover:shadow-[#3b82f6]/15'
+                hoverBorder: 'hover:border-[#3b82f6]/40 dark:hover:border-[#3b82f6]/40',
+                hoverShadow: 'hover:shadow-lg hover:shadow-[#3b82f6]/10'
             },
             {
                 name: 'Business Sub-Types',
@@ -431,11 +431,11 @@ const Client = () => {
                 badgeText: `${totalSubtypes} Sub-Types Defined`,
                 icon: Briefcase,
                 cardBg: 'bg-gradient-to-br from-white via-[#f0fdf4] to-[#dcfce7] dark:from-[#091f14] dark:via-[#0e2c1c] dark:to-[#040e08] border-[#bbf7d0] dark:border-[#164e2e]',
-                iconBg: 'bg-[#10b981] shadow-md shadow-[#10b981]/30 text-white',
+                iconBg: 'bg-[#10b981] shadow-md shadow-[#10b981]/25 text-white',
                 badgeStyle: 'bg-[#dcfce7] dark:bg-[#143d26] text-[#059669] dark:text-[#86efac] border-[#86efac] dark:border-[#1d5936]',
                 glowColor: 'bg-[#10b981]',
-                hoverBorder: 'hover:border-[#10b981]/70 dark:hover:border-[#10b981]/60',
-                hoverShadow: 'hover:shadow-xl hover:shadow-[#10b981]/15'
+                hoverBorder: 'hover:border-[#10b981]/40 dark:hover:border-[#10b981]/40',
+                hoverShadow: 'hover:shadow-lg hover:shadow-[#10b981]/10'
             },
             {
                 name: 'Active Client Portals',
@@ -444,11 +444,11 @@ const Client = () => {
                 badgeText: `${configuredCount} Active ${configuredCount === 1 ? 'Hub' : 'Hubs'}`,
                 icon: Layers3,
                 cardBg: 'bg-gradient-to-br from-white via-[#faf5ff] to-[#f3e8ff] dark:from-[#170e2b] dark:via-[#1f133b] dark:to-[#080410] border-[#e9d5ff] dark:border-[#3b2066]',
-                iconBg: 'bg-[#8b5cf6] shadow-md shadow-[#8b5cf6]/30 text-white',
+                iconBg: 'bg-[#8b5cf6] shadow-md shadow-[#8b5cf6]/25 text-white',
                 badgeStyle: 'bg-[#f3e8ff] dark:bg-[#2c194d] text-[#7c3aed] dark:text-[#d8b4fe] border-[#d8b4fe] dark:border-[#4c2880]',
                 glowColor: 'bg-[#8b5cf6]',
-                hoverBorder: 'hover:border-[#8b5cf6]/70 dark:hover:border-[#8b5cf6]/60',
-                hoverShadow: 'hover:shadow-xl hover:shadow-[#8b5cf6]/15'
+                hoverBorder: 'hover:border-[#8b5cf6]/40 dark:hover:border-[#8b5cf6]/40',
+                hoverShadow: 'hover:shadow-lg hover:shadow-[#8b5cf6]/10'
             },
             {
                 name: 'Live Deliverables',
@@ -457,11 +457,11 @@ const Client = () => {
                 badgeText: `${totalLiveLinks} Verified ${totalLiveLinks === 1 ? 'Link' : 'Links'}`,
                 icon: Sparkles,
                 cardBg: 'bg-gradient-to-br from-white via-[#fffbeb] to-[#fef3c7] dark:from-[#211a07] dark:via-[#2b220a] dark:to-[#0a0802] border-[#fde68a] dark:border-[#524114]',
-                iconBg: 'bg-[#f59e0b] shadow-md shadow-[#f59e0b]/30 text-white',
+                iconBg: 'bg-[#f59e0b] shadow-md shadow-[#f59e0b]/25 text-white',
                 badgeStyle: 'bg-[#fef3c7] dark:bg-[#382b0b] text-[#d97706] dark:text-[#fcd34d] border-[#fcd34d] dark:border-[#5e4712]',
                 glowColor: 'bg-[#f59e0b]',
-                hoverBorder: 'hover:border-[#f59e0b]/70 dark:hover:border-[#f59e0b]/60',
-                hoverShadow: 'hover:shadow-xl hover:shadow-[#f59e0b]/15'
+                hoverBorder: 'hover:border-[#f59e0b]/40 dark:hover:border-[#f59e0b]/40',
+                hoverShadow: 'hover:shadow-lg hover:shadow-[#f59e0b]/10'
             }
         ];
     }, [businessTypes, clientLinks]);
@@ -539,7 +539,7 @@ const Client = () => {
                     >
                         {/* Soft Ambient Radial Corner Glow on Hover */}
                         <div
-                            className={`pointer-events-none absolute -right-6 -top-6 w-28 h-28 rounded-full blur-2xl opacity-15 group-hover:opacity-40 transition-opacity duration-300 ${stat.glowColor}`}
+                            className={`pointer-events-none absolute -right-6 -top-6 w-32 h-32 rounded-full blur-3xl opacity-5 group-hover:opacity-15 transition-opacity duration-300 ${stat.glowColor}`}
                         />
 
                         {/* Top Row: Vibrant Solid Circular Icon + Status Tag */}

@@ -35,12 +35,12 @@ const AdminDashboard = () => {
             subtext: 'Operational Units',
             icon: Briefcase,
             cardBg: 'bg-gradient-to-br from-white via-[#f5f3ff] to-[#ede9fe] dark:from-[#130f2c] dark:via-[#191438] dark:to-[#070514] border-[#ddd6fe] dark:border-[#382b6b]',
-            iconBg: 'bg-[#6366f1] shadow-md shadow-[#6366f1]/30 text-white',
+            iconBg: 'bg-[#6366f1] shadow-md shadow-[#6366f1]/25 text-white',
             badgeText: 'Active Units',
             badgeStyle: 'bg-[#ede9fe] dark:bg-[#251b47] text-[#4f46e5] dark:text-[#a5b4fc] border-[#c7d2fe] dark:border-[#372b66]',
             glowColor: 'bg-[#6366f1]',
-            hoverBorder: 'hover:border-[#6366f1]/70 dark:hover:border-[#6366f1]/60',
-            hoverShadow: 'hover:shadow-xl hover:shadow-[#6366f1]/15',
+            hoverBorder: 'hover:border-[#6366f1]/40 dark:hover:border-[#6366f1]/40',
+            hoverShadow: 'hover:shadow-lg hover:shadow-[#6366f1]/10',
             onClick: () => navigate('/admin/departments')
         },
         {
@@ -49,12 +49,12 @@ const AdminDashboard = () => {
             subtext: 'In Production',
             icon: FolderOpen,
             cardBg: 'bg-gradient-to-br from-white via-[#f0f9ff] to-[#e0f2fe] dark:from-[#081827] dark:via-[#0c2236] dark:to-[#040c14] border-[#bae6fd] dark:border-[#134063]',
-            iconBg: 'bg-[#0ea5e9] shadow-md shadow-[#0ea5e9]/30 text-white',
+            iconBg: 'bg-[#0ea5e9] shadow-md shadow-[#0ea5e9]/25 text-white',
             badgeText: '100% Active Work',
             badgeStyle: 'bg-[#e0f2fe] dark:bg-[#0c2b45] text-[#0284c7] dark:text-[#7dd3fc] border-[#7dd3fc] dark:border-[#184d78]',
             glowColor: 'bg-[#0ea5e9]',
-            hoverBorder: 'hover:border-[#0ea5e9]/70 dark:hover:border-[#0ea5e9]/60',
-            hoverShadow: 'hover:shadow-xl hover:shadow-[#0ea5e9]/15',
+            hoverBorder: 'hover:border-[#0ea5e9]/40 dark:hover:border-[#0ea5e9]/40',
+            hoverShadow: 'hover:shadow-lg hover:shadow-[#0ea5e9]/10',
             onClick: () => navigate('/admin/projects')
         },
         {
@@ -63,12 +63,12 @@ const AdminDashboard = () => {
             subtext: 'Assigned Employees',
             icon: Users,
             cardBg: 'bg-gradient-to-br from-white via-[#fffbeb] to-[#fef3c7] dark:from-[#211a07] dark:via-[#2b220a] dark:to-[#0a0802] border-[#fde68a] dark:border-[#524114]',
-            iconBg: 'bg-[#f59e0b] shadow-md shadow-[#f59e0b]/30 text-white',
+            iconBg: 'bg-[#f59e0b] shadow-md shadow-[#f59e0b]/25 text-white',
             badgeText: 'Full Capacity',
             badgeStyle: 'bg-[#fef3c7] dark:bg-[#382b0b] text-[#d97706] dark:text-[#fcd34d] border-[#fcd34d] dark:border-[#5e4712]',
             glowColor: 'bg-[#f59e0b]',
-            hoverBorder: 'hover:border-[#f59e0b]/70 dark:hover:border-[#f59e0b]/60',
-            hoverShadow: 'hover:shadow-xl hover:shadow-[#f59e0b]/15',
+            hoverBorder: 'hover:border-[#f59e0b]/40 dark:hover:border-[#f59e0b]/40',
+            hoverShadow: 'hover:shadow-lg hover:shadow-[#f59e0b]/10',
             onClick: () => navigate('/admin/employees')
         },
     ];
@@ -96,16 +96,6 @@ const AdminDashboard = () => {
                         One view for your complete office setup, teams, and development delivery.
                     </p>
                 </div>
-
-                <div className="flex items-center space-x-3">
-                    <button
-                        onClick={() => navigate('/admin/projects')}
-                        className="inline-flex items-center justify-center space-x-2 bg-gradient-to-b from-[#32509a] to-[#233c74] hover:from-[#3859aa] hover:to-[#264180] text-white px-5 py-3 rounded-2xl transition-all shadow-md shadow-[#233c74]/30 font-bold cursor-pointer"
-                    >
-                        <Plus className="h-5 w-5" />
-                        <span>New</span>
-                    </button>
-                </div>
             </div>
 
             {/* Stat Cards Grid */}
@@ -123,7 +113,7 @@ const AdminDashboard = () => {
                     >
                         {/* Soft Ambient Radial Corner Glow on Hover */}
                         <div
-                            className={`pointer-events-none absolute -right-6 -top-6 w-28 h-28 rounded-full blur-2xl opacity-15 group-hover:opacity-40 transition-opacity duration-300 ${card.glowColor}`}
+                            className={`pointer-events-none absolute -right-6 -top-6 w-32 h-32 rounded-full blur-3xl opacity-5 group-hover:opacity-15 transition-opacity duration-300 ${card.glowColor}`}
                         />
 
                         {/* Top Row: Vibrant Solid Circular Icon + Status Tag */}
