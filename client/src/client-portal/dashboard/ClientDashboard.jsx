@@ -310,10 +310,10 @@ const ClientDashboard = () => {
                 {currentStage === 2 && (
                     <motion.div
                         key="stage-2"
-                        initial={{ opacity: 0, scale: 1.08 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9, filter: 'blur(6px)', transition: { duration: 0.38 } }}
-                        transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0, filter: 'blur(4px)', transition: { duration: 0.3 } }}
+                        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                     >
                         {/* Step 2: Sub-Businesses with Zoom Animation and Staggered Cards */}
                         <SubBusinessMotionView
