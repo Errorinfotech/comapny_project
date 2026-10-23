@@ -53,7 +53,7 @@ const ClientHeader = ({
 
                 {/* Center / Mascot */}
                 <div className="hidden lg:flex items-center">
-                    <ClientRobotMascot statusText={`Connected to ${clientSubtype}`} />
+                    <ClientRobotMascot statusText="Portal System Active" />
                 </div>
 
                 {/* Right Actions */}

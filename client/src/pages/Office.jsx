@@ -130,52 +130,52 @@ const Office = () => {
                 value: departments.length,
                 subtext: 'Operational Units',
                 icon: Building2,
-                cardBg: 'bg-gradient-to-br from-white via-[#fff4f4] to-[#ffebeb] dark:from-[#1c0d10] dark:via-[#261217] dark:to-[#0a0507] border-[#ffd5d5] dark:border-[#52202a]',
-                iconBg: 'bg-[#FF6B6B] shadow-md shadow-[#FF6B6B]/30 text-white',
+                cardBg: 'bg-gradient-to-br from-white via-[#fff7f7] to-[#fff0f0] dark:from-[#1c0d10] dark:via-[#261217] dark:to-[#0a0507] border-[#ffe4e4] dark:border-[#52202a]',
+                iconBg: 'bg-[#FF6B6B] shadow-md shadow-[#FF6B6B]/25 text-white',
                 badgeText: 'Operational',
                 badgeStyle: 'bg-[#fff0f0] dark:bg-[#33141a]/80 text-[#e04848] dark:text-[#ff9999] border-[#ffc2c2] dark:border-[#5c242f]',
                 glowColor: 'bg-[#FF6B6B]',
-                hoverBorder: 'hover:border-[#FF6B6B]/70 dark:hover:border-[#FF6B6B]/60',
-                hoverShadow: 'hover:shadow-xl hover:shadow-[#FF6B6B]/15'
+                hoverBorder: 'hover:border-[#FF6B6B]/40 dark:hover:border-[#FF6B6B]/40',
+                hoverShadow: 'hover:shadow-lg hover:shadow-[#FF6B6B]/10'
             },
             {
                 name: 'Reporting Managers',
                 value: departmentMap.length,
                 subtext: 'Supervisory Leads',
                 icon: Layers3,
-                cardBg: 'bg-gradient-to-br from-white via-[#fffdf2] to-[#fff8e3] dark:from-[#1c1708] dark:via-[#261f0a] dark:to-[#0a0802] border-[#ffe8a8] dark:border-[#524114]',
-                iconBg: 'bg-[#FFD166] shadow-md shadow-[#FFD166]/35 text-white',
+                cardBg: 'bg-gradient-to-br from-white via-[#fffef7] to-[#fff9eb] dark:from-[#1c1708] dark:via-[#261f0a] dark:to-[#0a0802] border-[#ffeed0] dark:border-[#524114]',
+                iconBg: 'bg-[#FFD166] shadow-md shadow-[#FFD166]/25 text-white',
                 badgeText: 'Hierarchy Synced',
                 badgeStyle: 'bg-[#fff9e6] dark:bg-[#33280c]/80 text-[#b58000] dark:text-[#ffe082] border-[#ffdf85] dark:border-[#5c4714]',
                 glowColor: 'bg-[#FFD166]',
-                hoverBorder: 'hover:border-[#FFD166]/80 dark:hover:border-[#FFD166]/60',
-                hoverShadow: 'hover:shadow-xl hover:shadow-[#FFD166]/15'
+                hoverBorder: 'hover:border-[#FFD166]/40 dark:hover:border-[#FFD166]/40',
+                hoverShadow: 'hover:shadow-lg hover:shadow-[#FFD166]/10'
             },
             {
                 name: 'Active Development Units',
                 value: activeDepartments,
                 subtext: 'In Production',
                 icon: GitBranch,
-                cardBg: 'bg-gradient-to-br from-white via-[#f0fdf9] to-[#e4faf3] dark:from-[#061c16] dark:via-[#09261e] dark:to-[#030d0a] border-[#b5f2e1] dark:border-[#134d3c]',
-                iconBg: 'bg-[#06D6A0] shadow-md shadow-[#06D6A0]/30 text-white',
+                cardBg: 'bg-gradient-to-br from-white via-[#f5fdfa] to-[#edfcf7] dark:from-[#061c16] dark:via-[#09261e] dark:to-[#030d0a] border-[#ccf6ea] dark:border-[#134d3c]',
+                iconBg: 'bg-[#06D6A0] shadow-md shadow-[#06D6A0]/25 text-white',
                 badgeText: '100% Active Work',
                 badgeStyle: 'bg-[#e8fbf5] dark:bg-[#0c362a]/80 text-[#048764] dark:text-[#5cebc7] border-[#a1ebd6] dark:border-[#175c47]',
                 glowColor: 'bg-[#06D6A0]',
-                hoverBorder: 'hover:border-[#06D6A0]/80 dark:hover:border-[#06D6A0]/60',
-                hoverShadow: 'hover:shadow-xl hover:shadow-[#06D6A0]/15'
+                hoverBorder: 'hover:border-[#06D6A0]/40 dark:hover:border-[#06D6A0]/40',
+                hoverShadow: 'hover:shadow-lg hover:shadow-[#06D6A0]/10'
             },
             {
                 name: 'Office Workforce',
                 value: employees.length,
                 subtext: 'Assigned Employees',
                 icon: Users,
-                cardBg: 'bg-gradient-to-br from-white via-[#f0f8fb] to-[#e4f2f7] dark:from-[#071620] dark:via-[#0a202e] dark:to-[#03090d] border-[#b8dfec] dark:border-[#123e54]',
-                iconBg: 'bg-[#118AB2] shadow-md shadow-[#118AB2]/30 text-white',
+                cardBg: 'bg-gradient-to-br from-white via-[#f5f9fc] to-[#edf5f9] dark:from-[#071620] dark:via-[#0a202e] dark:to-[#03090d] border-[#cbe4f0] dark:border-[#123e54]',
+                iconBg: 'bg-[#118AB2] shadow-md shadow-[#118AB2]/25 text-white',
                 badgeText: 'Full Capacity',
                 badgeStyle: 'bg-[#e6f4f8] dark:bg-[#0e2c3d]/80 text-[#0b5f7b] dark:text-[#6ec8e6] border-[#a5d6e6] dark:border-[#1a516e]',
                 glowColor: 'bg-[#118AB2]',
-                hoverBorder: 'hover:border-[#118AB2]/80 dark:hover:border-[#118AB2]/60',
-                hoverShadow: 'hover:shadow-xl hover:shadow-[#118AB2]/15'
+                hoverBorder: 'hover:border-[#118AB2]/40 dark:hover:border-[#118AB2]/40',
+                hoverShadow: 'hover:shadow-lg hover:shadow-[#118AB2]/10'
             }
         ];
     }, [departments.length, departmentMap, employees.length]);
@@ -203,64 +203,6 @@ const Office = () => {
                     <p className="text-slate-500 mt-2">
                         One view for your complete office setup, teams, and development delivery.
                     </p>
-                </div>
-                <div className="relative">
-                    <button
-                        onClick={() => setShowCreateMenu((current) => !current)}
-                        className="inline-flex items-center justify-center space-x-2 bg-gradient-to-b from-[#32509a] to-[#233c74] hover:from-[#3859aa] hover:to-[#264180] text-white px-5 py-3 rounded-2xl transition-all shadow-md shadow-[#233c74]/30 cursor-pointer"
-                    >
-                        <Plus className="h-5 w-5" />
-                        <span className="font-bold">New</span>
-                    </button>
-
-                    {showCreateMenu && (
-                        <div className="absolute right-0 top-full mt-3 w-72 rounded-[1.5rem] border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl p-3 z-20">
-                            <button
-                                onClick={() => {
-                                    setShowCreateMenu(false);
-                                    setQuickMode('folder');
-                                    setSelectedFiles([]);
-                                    folderInputRef.current?.click();
-                                }}
-                                className="w-full flex items-start space-x-3 rounded-xl p-4 text-left hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-all"
-                            >
-                                <FolderOpen className="h-5 w-5 text-blue-600 mt-0.5" />
-                                <div>
-                                    <p className="font-semibold text-slate-900 dark:text-white">Folder</p>
-                                    <p className="text-sm text-slate-500">Upload a complete project folder structure.</p>
-                                </div>
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setShowCreateMenu(false);
-                                    setQuickMode('files');
-                                    setSelectedFiles([]);
-                                    fileInputRef.current?.click();
-                                }}
-                                className="w-full flex items-start space-x-3 rounded-xl p-4 text-left hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-all"
-                            >
-                                <FileText className="h-5 w-5 text-blue-500 mt-0.5" />
-                                <div>
-                                    <p className="font-semibold text-slate-900 dark:text-white">File</p>
-                                    <p className="text-sm text-slate-500">Upload selected files for office work.</p>
-                                </div>
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setShowCreateMenu(false);
-                                    setQuickMode('links');
-                                    setSelectedFiles([]);
-                                }}
-                                className="w-full flex items-start space-x-3 rounded-xl p-4 text-left hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-all"
-                            >
-                                <Link2 className="h-5 w-5 text-emerald-500 mt-0.5" />
-                                <div>
-                                    <p className="font-semibold text-slate-900 dark:text-white">Links</p>
-                                    <p className="text-sm text-slate-500">Type live and repository links in input fields.</p>
-                                </div>
-                            </button>
-                        </div>
-                    )}
                 </div>
             </div>
 
@@ -435,7 +377,7 @@ const Office = () => {
                     >
                         {/* Soft Ambient Radial Corner Glow on Hover */}
                         <div
-                            className={`pointer-events-none absolute -right-6 -top-6 w-28 h-28 rounded-full blur-2xl opacity-15 group-hover:opacity-40 transition-opacity duration-300 ${stat.glowColor}`}
+                            className={`pointer-events-none absolute -right-6 -top-6 w-32 h-32 rounded-full blur-3xl opacity-5 group-hover:opacity-15 transition-opacity duration-300 ${stat.glowColor}`}
                         />
 
                         {/* Top Row: Vibrant Solid Circular Icon + Status Tag + Animated Chevron */}
