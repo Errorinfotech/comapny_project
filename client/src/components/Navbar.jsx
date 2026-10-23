@@ -74,7 +74,7 @@ const Navbar = () => {
     const isOffice = location.pathname.includes('/office');
     const isClient = location.pathname.includes('/client');
     const officePath = user?.role === 'admin' ? '/admin/office' : '/office';
-    const clientPath = user?.role === 'admin' ? '/admin/client' : '/client';
+    const clientPath = '/client-portal';
 
     return (
         <header className="h-16 sticky top-0 z-40 flex items-center justify-between px-6 sm:px-8 border-b border-sky-100/80 dark:border-[#121c42] bg-white dark:bg-[#060d24] transition-colors">

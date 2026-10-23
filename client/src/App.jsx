@@ -13,7 +13,7 @@ import Profile from './pages/Profile';
 import UploadRedirect from './pages/UploadRedirect';
 import Office from './pages/Office';
 import Client from './pages/Client';
-import ClientPortal from './pages/ClientPortal';
+import ClientPortalRoot from './client-portal/ClientPortalRoot';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, adminOnly = false }) => {
@@ -79,9 +79,7 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/client-portal" element={
-              <ProtectedRoute>
-                <ClientPortal />
-              </ProtectedRoute>
+              <ClientPortalRoot />
             } />
 
             {/* Admin Routes */}
