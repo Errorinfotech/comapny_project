@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, HelpCircle, CheckCircle, Mail, Phone } from 'lucide-react';
 
-const SupportModal = ({ isOpen, onClose, clientName = "SH chartered accountant" }) => {
+const SupportModal = ({ isOpen, onClose, clientName = "Client Workspace" }) => {
     const [subject, setSubject] = useState('');
     const [details, setDetails] = useState('');
     const [priority, setPriority] = useState('normal');

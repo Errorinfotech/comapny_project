@@ -36,8 +36,8 @@ const ClientPortalRoot = () => {
         <div className="min-h-screen bg-gradient-to-tr from-[#e6f1fc] via-[#edf5fd] to-[#f6faff] dark:from-[#060b19] dark:via-[#091126] dark:to-[#060a17] text-slate-900 dark:text-slate-100 transition-colors duration-300">
             {/* Dedicated Standalone Client Header (No Office Sidebar) */}
             <ClientHeader 
-                clientBusinessName={user?.clientSubtype ? `${user.clientSubtype} Workspace` : "SH chartered accountant"}
-                clientSubtype={user?.clientSubtype || "CA"}
+                clientBusinessName={user?.businessName || user?.name || "Client Directory"}
+                clientSubtype={user?.clientSubtype || "Commercial Portals"}
                 isAdmin={user?.role === 'admin'}
                 onExitClientPortal={() => setClientSessionActive(false)}
             />

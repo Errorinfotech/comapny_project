@@ -6,13 +6,8 @@ import {
 } from 'lucide-react';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
-import ProjectHeroCard from './components/ProjectHeroCard';
-import ProjectRoadmap from './components/ProjectRoadmap';
 import DeliverablesVault from './components/DeliverablesVault';
 import SupportModal from './components/SupportModal';
-import { getIndustryIntelligence } from './components/IndustryIntelligence';
-import CrmModulesGrid from './components/CrmModulesGrid';
-import ValuePropositionBanner from './components/ValuePropositionBanner';
 
 const businessData = [
   // 1. Service Business
@@ -258,11 +253,6 @@ const ClientDashboard = () => {
     const [editForm, setEditForm] = useState([]);
     const [isSupportOpen, setIsSupportOpen] = useState(false);
 
-    // Dynamic CRM & ERP Intelligence for selected Sub-business
-    const intelligence = useMemo(() => {
-        return getIndustryIntelligence(selectedType, selectedSubtype);
-    }, [selectedType, selectedSubtype]);
-
     // Fetch dynamic client links from backend
     const fetchLinks = async () => {
         try {
@@ -395,8 +385,8 @@ const ClientDashboard = () => {
     }
 
     const primaryClient = displayClients[0] || {
-        businessName: matchingBusiness?.businessName || 'SH chartered accountant',
-        link: matchingBusiness?.link || 'https://errorinfotech.in'
+        businessName: matchingBusiness?.businessName || (selectedSubtype ? `${selectedSubtype} Workspace` : 'Client Workspace'),
+        link: matchingBusiness?.link || ''
     };
 
     return (
@@ -528,7 +518,7 @@ const ClientDashboard = () => {
                                         type="text"
                                         value={client.businessName}
                                         onChange={(e) => handleClientChange(idx, 'businessName', e.target.value)}
-                                        placeholder="e.g. SH chartered accountant"
+                                        placeholder="e.g. Business / Client Name"
                                         className="w-full p-2.5 rounded-xl bg-white dark:bg-[#070e28] border border-slate-200 dark:border-[#14235a] text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                                     />
                                 </div>
@@ -585,52 +575,33 @@ const ClientDashboard = () => {
                 className="pointer-events-none fixed top-1/4 right-1/10 w-96 h-96 rounded-full bg-gradient-to-br from-blue-600/15 via-sky-400/20 to-transparent blur-3xl -z-10"
             />
 
-            {/* Display Active Sub-Business Deliverables & Complete CRM/ERP Showcase with Seamless Crossfade Transition */}
+            {/* Display Active Sub-Business Deliverables */}
             <AnimatePresence mode="wait">
-                {selectedType && selectedSubtype && !isEditing && (
+                {selectedType && selectedSubtype && !isEditing ? (
                     <motion.div 
                         key={`${selectedType}-${selectedSubtype}`}
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -16 }}
                         transition={{ duration: 0.28, ease: "easeOut" }}
-                        className="relative z-10 space-y-7"
+                        className="relative z-10 space-y-6"
                     >
-                        {/* 1. 3D Perspective Tilt Hero Card (Dynamic ERP Suite & Launch Trigger) */}
-                        <ProjectHeroCard
-                            businessName={primaryClient.businessName}
-                            sector={selectedType}
-                            subtype={selectedSubtype}
-                            primaryLink={primaryClient.link || "https://errorinfotech.in"}
-                            uptime="99.98%"
-                            status={displayClients.length > 0 ? "Active Production" : "Engineered & Ready"}
-                            suiteName={intelligence.suiteName}
-                            tagline={intelligence.tagline}
-                            stats={intelligence.stats}
-                        />
-
-                        {/* 2. Core CRM & ERP Architecture Modules (6 Specialized Units) */}
-                        <CrmModulesGrid
-                            intelligence={intelligence}
-                            subtype={selectedSubtype}
-                        />
-
-                        {/* 3. Live Client Deployments & Proofs Vault */}
+                        {/* Live Client Deployments & Proofs Vault */}
                         {displayClients.length > 0 ? (
                             <DeliverablesVault 
                                 clients={displayClients} 
                                 subtype={selectedSubtype}
                             />
                         ) : (
-                            <div className="rounded-3xl border border-dashed border-sky-200 dark:border-[#14235a] p-8 text-center bg-white/60 dark:bg-[#070e28]/60">
-                                <div className="w-10 h-10 rounded-2xl bg-sky-50 dark:bg-[#0a1438] text-blue-600 dark:text-sky-400 flex items-center justify-center mx-auto mb-3">
+                            <div className="rounded-3xl border border-dashed border-sky-200 dark:border-[#14235a] p-10 text-center bg-white/60 dark:bg-[#070e28]/60">
+                                <div className="w-12 h-12 rounded-2xl bg-sky-50 dark:bg-[#0a1438] text-blue-600 dark:text-sky-400 flex items-center justify-center mx-auto mb-3">
                                     <Sparkles className="w-5 h-5" />
                                 </div>
                                 <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                                    {selectedSubtype} Enterprise Suite Ready for Client Deployment
+                                    No live portal configured yet for {selectedSubtype}
                                 </h3>
                                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 max-w-md mx-auto">
-                                    The full ERP & CRM architecture above is built and ready to deploy for any {selectedSubtype} client.
+                                    Deliverable links for {selectedSubtype} ({selectedType}) will appear here once configured.
                                 </p>
                                 {isAdmin && (
                                     <button
@@ -639,18 +610,24 @@ const ClientDashboard = () => {
                                         className="mt-4 inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-b from-[#32509a] to-[#233c74] text-white text-xs font-bold shadow-md shadow-[#233c74]/25 transition-all cursor-pointer"
                                     >
                                         <Plus className="w-4 h-4" />
-                                        <span>Configure First Live Client URL</span>
+                                        <span>Configure Client URL</span>
                                     </button>
                                 )}
                             </div>
                         )}
-
-                        {/* 4. The Error Infotech Enterprise Advantage */}
-                        <ValuePropositionBanner />
-
-                        {/* 5. Project Lifecycle Roadmap */}
-                        <ProjectRoadmap overallProgress={100} />
                     </motion.div>
+                ) : !isEditing && (
+                    <div className="rounded-3xl border border-dashed border-sky-200 dark:border-[#14235a] p-10 text-center bg-white/60 dark:bg-[#070e28]/60">
+                        <div className="w-12 h-12 rounded-2xl bg-sky-50 dark:bg-[#0a1438] text-blue-600 dark:text-sky-400 flex items-center justify-center mx-auto mb-3">
+                            <Layers3 className="w-6 h-6" />
+                        </div>
+                        <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                            Select Business & Sub-Business
+                        </h3>
+                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 max-w-md mx-auto">
+                            Choose a commercial sector and sub-type from the navigator above to view active client portals and deliverables.
+                        </p>
+                    </div>
                 )}
             </AnimatePresence>
 
