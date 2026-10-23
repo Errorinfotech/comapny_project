@@ -78,10 +78,10 @@ const DeliverablesStudio = ({
 
     return (
         <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, scale: 1.06 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.92, filter: 'blur(4px)' }}
+            transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
             className="w-full bg-white/95 dark:bg-[#070e28]/95 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 border border-[#D9E8FA] dark:border-[#14235a] shadow-xl shadow-sky-950/5 relative overflow-hidden"
         >
             {/* Top Navigation & Context Bar */}
