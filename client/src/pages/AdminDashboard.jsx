@@ -34,13 +34,10 @@ const AdminDashboard = () => {
             value: stats.totalDepartments,
             subtext: 'Operational Units',
             icon: Briefcase,
-            cardBg: 'bg-gradient-to-br from-white via-[#f5f3ff] to-[#ede9fe] dark:from-[#130f2c] dark:via-[#191438] dark:to-[#070514] border-[#ddd6fe] dark:border-[#382b6b]',
-            iconBg: 'bg-[#6366f1] shadow-md shadow-[#6366f1]/25 text-white',
+            iconStyle: 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400',
             badgeText: 'Active Units',
-            badgeStyle: 'bg-[#ede9fe] dark:bg-[#251b47] text-[#4f46e5] dark:text-[#a5b4fc] border-[#c7d2fe] dark:border-[#372b66]',
-            glowColor: 'bg-[#6366f1]',
-            hoverBorder: 'hover:border-[#6366f1]/40 dark:hover:border-[#6366f1]/40',
-            hoverShadow: 'hover:shadow-lg hover:shadow-[#6366f1]/10',
+            badgeStyle: 'bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200/60 dark:border-blue-900/50',
+            hoverBorder: 'hover:border-blue-300 dark:hover:border-blue-700/60',
             onClick: () => navigate('/admin/departments')
         },
         {
@@ -48,13 +45,10 @@ const AdminDashboard = () => {
             value: stats.totalProjects,
             subtext: 'In Production',
             icon: FolderOpen,
-            cardBg: 'bg-gradient-to-br from-white via-[#f0f9ff] to-[#e0f2fe] dark:from-[#081827] dark:via-[#0c2236] dark:to-[#040c14] border-[#bae6fd] dark:border-[#134063]',
-            iconBg: 'bg-[#0ea5e9] shadow-md shadow-[#0ea5e9]/25 text-white',
+            iconStyle: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400',
             badgeText: '100% Active Work',
-            badgeStyle: 'bg-[#e0f2fe] dark:bg-[#0c2b45] text-[#0284c7] dark:text-[#7dd3fc] border-[#7dd3fc] dark:border-[#184d78]',
-            glowColor: 'bg-[#0ea5e9]',
-            hoverBorder: 'hover:border-[#0ea5e9]/40 dark:hover:border-[#0ea5e9]/40',
-            hoverShadow: 'hover:shadow-lg hover:shadow-[#0ea5e9]/10',
+            badgeStyle: 'bg-emerald-50/80 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-900/50',
+            hoverBorder: 'hover:border-emerald-300 dark:hover:border-emerald-700/60',
             onClick: () => navigate('/admin/projects')
         },
         {
@@ -62,13 +56,10 @@ const AdminDashboard = () => {
             value: stats.totalEmployees,
             subtext: 'Assigned Employees',
             icon: Users,
-            cardBg: 'bg-gradient-to-br from-white via-[#fffbeb] to-[#fef3c7] dark:from-[#211a07] dark:via-[#2b220a] dark:to-[#0a0802] border-[#fde68a] dark:border-[#524114]',
-            iconBg: 'bg-[#f59e0b] shadow-md shadow-[#f59e0b]/25 text-white',
+            iconStyle: 'bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400',
             badgeText: 'Full Capacity',
-            badgeStyle: 'bg-[#fef3c7] dark:bg-[#382b0b] text-[#d97706] dark:text-[#fcd34d] border-[#fcd34d] dark:border-[#5e4712]',
-            glowColor: 'bg-[#f59e0b]',
-            hoverBorder: 'hover:border-[#f59e0b]/40 dark:hover:border-[#f59e0b]/40',
-            hoverShadow: 'hover:shadow-lg hover:shadow-[#f59e0b]/10',
+            badgeStyle: 'bg-amber-50/80 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200/60 dark:border-amber-900/50',
+            hoverBorder: 'hover:border-amber-300 dark:hover:border-amber-700/60',
             onClick: () => navigate('/admin/employees')
         },
     ];
@@ -99,47 +90,42 @@ const AdminDashboard = () => {
             </div>
 
             {/* Stat Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 {cards.map((card, index) => (
                     <motion.div
                         key={card.name}
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
-                        whileHover={{ y: -6, scale: 1.015 }}
-                        whileTap={{ scale: 0.985 }}
-                        transition={{ delay: index * 0.08, duration: 0.35, ease: "easeOut" }}
+                        whileHover={{ y: -3 }}
+                        transition={{ delay: index * 0.05, duration: 0.25, ease: "easeOut" }}
                         onClick={card.onClick}
-                        className={`group relative overflow-hidden rounded-[26px] p-6 border ${card.cardBg} ${card.hoverBorder} ${card.hoverShadow} shadow-xs transition-all duration-300 cursor-pointer select-none`}
+                        className={`group relative overflow-hidden rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-md ${card.hoverBorder} transition-all duration-200 cursor-pointer select-none`}
                     >
-                        {/* Soft Ambient Radial Corner Glow on Hover */}
-                        <div
-                            className={`pointer-events-none absolute -right-6 -top-6 w-32 h-32 rounded-full blur-3xl opacity-5 group-hover:opacity-15 transition-opacity duration-300 ${card.glowColor}`}
-                        />
-
-                        {/* Top Row: Vibrant Solid Circular Icon + Status Tag */}
-                        <div className="relative z-10 flex items-center justify-between">
-                            <div className={`w-12 h-12 rounded-full ${card.iconBg} flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-110`}>
-                                <card.icon className="h-6 w-6 drop-shadow-sm" />
+                        {/* Top Row: Icon + Status Tag */}
+                        <div className="flex items-center justify-between">
+                            <div className={`w-11 h-11 rounded-xl ${card.iconStyle} flex items-center justify-center transition-transform duration-200 group-hover:scale-105`}>
+                                <card.icon className="h-5 w-5" />
                             </div>
 
-                            <span className={`px-2.5 py-1 rounded-full text-[10.5px] font-bold border shadow-2xs ${card.badgeStyle}`}>
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${card.badgeStyle}`}>
+                                <span className="w-1.5 h-1.5 rounded-full bg-current opacity-80" />
                                 {card.badgeText}
                             </span>
                         </div>
 
                         {/* Metric Counter */}
-                        <div className="relative z-10 mt-4 flex items-baseline">
-                            <span className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                        <div className="mt-4">
+                            <span className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
                                 {card.value}
                             </span>
                         </div>
 
                         {/* Title & Subtext */}
-                        <div className="relative z-10 mt-1">
-                            <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight leading-snug">
+                        <div className="mt-1">
+                            <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100 tracking-tight">
                                 {card.name}
                             </h3>
-                            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                                 {card.subtext}
                             </p>
                         </div>
