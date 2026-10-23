@@ -3,10 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { HelpCircle } from 'lucide-react';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
-import JourneyStepIndicator from './components/JourneyStepIndicator';
-import Industry3DCarousel from './components/Industry3DCarousel';
-import IndustryDiscoveryPanel from './components/IndustryDiscoveryPanel';
-import SubBusinessSelector from './components/SubBusinessSelector';
+import HorizontalBusinessMotionView from './components/HorizontalBusinessMotionView';
+import SubBusinessMotionView from './components/SubBusinessMotionView';
 import DeliverablesStudio from './components/DeliverablesStudio';
 import SupportModal from './components/SupportModal';
 
@@ -255,16 +253,6 @@ const ClientDashboard = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // Jump via Journey Step Indicator
-    const handleStepClick = (stepStage) => {
-        if (stepStage === 1) {
-            handleBackToBusinesses();
-        } else if (stepStage === 2 && selectedType) {
-            handleBackToSubtypes();
-        } else if (stepStage === 3 && selectedSubtype) {
-            setCurrentStage(3);
-        }
-    };
 
     // Real API save deliverables
     const handleSaveDeliverables = async (clientsToSave) => {
@@ -296,57 +284,25 @@ const ClientDashboard = () => {
     }
 
     return (
-        <div className="space-y-8 max-w-7xl mx-auto py-2">
-            {/* Top Bar with Guided Journey Step Indicator & Support Trigger */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex-1">
-                    <JourneyStepIndicator
-                        currentStage={currentStage}
-                        selectedType={selectedType}
-                        selectedSubtype={selectedSubtype}
-                        isConfigured={displayClients.length > 0}
-                        onStepClick={handleStepClick}
-                    />
-                </div>
-
-                <div className="flex items-center justify-end space-x-2 self-end md:self-auto mb-6 md:mb-8">
-                    <button
-                        type="button"
-                        onClick={() => setIsSupportOpen(true)}
-                        className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-white dark:bg-[#070e28] hover:bg-slate-50 dark:hover:bg-[#0f1d52] text-[#172B4D] dark:text-slate-200 border border-[#D9E8FA] dark:border-[#14235a] shadow-xs transition-all cursor-pointer"
-                    >
-                        <HelpCircle className="w-3.5 h-3.5 text-[#2463EB] dark:text-sky-400" />
-                        <span>Client Support</span>
-                    </button>
-                </div>
-            </div>
-
+        <div className="max-w-7xl mx-auto">
             {/* Continuous Cinematic Journey Stage Switcher */}
             <AnimatePresence mode="wait">
                 {currentStage === 1 && (
                     <motion.div
                         key="stage-1"
-                        initial={{ opacity: 0, scale: 0.98 }}
+                        initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.3 } }}
-                        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                        className="space-y-8"
+                        exit={{ opacity: 0, scale: 0.85, filter: 'blur(6px)', transition: { duration: 0.38 } }}
+                        transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
                     >
-                        {/* 1. Main Hero Stage — Interactive 3D Industry Carousel */}
-                        <Industry3DCarousel
+                        {/* Step 1: All Business Cards in Horizontal Motion View */}
+                        <HorizontalBusinessMotionView
                             industries={businessTypes}
                             selectedIndustry={selectedType}
-                            onConfirmBusiness={handleConfirmBusiness}
+                            onSelectBusiness={handleConfirmBusiness}
                             configuredCounts={sectorConfiguredMap}
                             subtypeCounts={subtypeCountsMap}
-                        />
-
-                        {/* 2. Industry Discovery Panel (Quick Search & 2-Way Sync) */}
-                        <IndustryDiscoveryPanel
-                            industries={businessTypes}
-                            selectedIndustry={selectedType}
-                            onSelectIndustry={(ind) => handleConfirmBusiness(ind)}
-                            configuredCounts={sectorConfiguredMap}
+                            onOpenSupport={() => setIsSupportOpen(true)}
                         />
                     </motion.div>
                 )}
@@ -354,17 +310,17 @@ const ClientDashboard = () => {
                 {currentStage === 2 && (
                     <motion.div
                         key="stage-2"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20, transition: { duration: 0.3 } }}
-                        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                        initial={{ opacity: 0, scale: 1.08 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9, filter: 'blur(6px)', transition: { duration: 0.38 } }}
+                        transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
                     >
-                        {/* 3. Sub-Business Selection Screen */}
-                        <SubBusinessSelector
+                        {/* Step 2: Sub-Businesses with Zoom Animation and Staggered Cards */}
+                        <SubBusinessMotionView
                             parentBusiness={selectedType}
                             subtypes={availableSubtypes}
                             selectedSubtype={selectedSubtype}
-                            onConfirmSubtype={handleConfirmSubtype}
+                            onSelectSubtype={handleConfirmSubtype}
                             onBackToBusinesses={handleBackToBusinesses}
                             configuredSubtypes={configuredSubtypesList}
                         />
@@ -374,12 +330,12 @@ const ClientDashboard = () => {
                 {currentStage === 3 && (
                     <motion.div
                         key="stage-3"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20, transition: { duration: 0.3 } }}
-                        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                        initial={{ opacity: 0, scale: 1.06 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.92, filter: 'blur(4px)', transition: { duration: 0.38 } }}
+                        transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
                     >
-                        {/* 4. Client Deliverables Configuration Studio */}
+                        {/* Step 3: Configure Client Deliverables Studio */}
                         <DeliverablesStudio
                             selectedType={selectedType}
                             selectedSubtype={selectedSubtype}
