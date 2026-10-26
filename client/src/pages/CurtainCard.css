@@ -1,0 +1,252 @@
+/* Curtain Reveal Cards (Full Thumbnail Background & Staggered Reveal) */
+.curtain-card {
+  position: relative;
+  height: 340px;
+  border-radius: 20px;
+  overflow: hidden;
+  color: #fff;
+  background: #0b0d12;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  isolation: isolate;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.curtain-card:hover,
+.curtain-card.open {
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+}
+
+.curtain-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+  overflow: hidden;
+}
+
+.curtain-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.curtain-ph {
+  position: absolute;
+  inset: 0 0 35% 0;
+  display: grid;
+  place-items: center;
+  font-size: 64px;
+}
+
+.curtain-ph i {
+  font: 800 54px Georgia, serif;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #b3141c;
+  font-style: normal;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.2);
+}
+
+.curtain-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: linear-gradient(transparent 30%, rgba(0, 0, 0, 0.9) 95%);
+  pointer-events: none;
+}
+
+.curtain-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #000;
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+}
+
+.curtain-tag {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  z-index: 10;
+  font-weight: 600;
+}
+
+.curtain-tag-right {
+  left: auto;
+  right: 14px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  opacity: 0.85;
+}
+
+.curtain-info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20px;
+  z-index: 10;
+}
+
+.curtain-title {
+  position: relative;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 0 4px;
+  padding-bottom: 6px;
+  font-size: 21px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.25;
+}
+
+.curtain-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 0;
+  background: #fff;
+  transition: width 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.curtain-meta {
+  font-size: 12px;
+  opacity: 0.75;
+  color: #fff;
+}
+
+.curtain-more {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.curtain-in {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.curtain-in > * {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+
+.curtain-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  opacity: 0.85;
+  margin: 12px 0;
+  color: #fff;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.curtain-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #fff;
+}
+
+.curtain-files {
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.curtain-act {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 12px;
+  font-size: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  align-items: center;
+}
+
+.curtain-act span {
+  opacity: 0.8;
+  transition: 0.2s;
+  cursor: pointer;
+  user-select: none;
+}
+
+.curtain-act span:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.curtain-act .curtain-act-details {
+  margin-left: auto;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Hover & Open Trigger States */
+.curtain-card:hover::before,
+.curtain-card.open::before {
+  opacity: 0.55;
+}
+
+.curtain-card:hover .curtain-bg,
+.curtain-card.open .curtain-bg {
+  transform: scale(1.05);
+}
+
+.curtain-card:hover .curtain-title::after,
+.curtain-card.open .curtain-title::after {
+  width: 100%;
+}
+
+.curtain-card:hover .curtain-more,
+.curtain-card.open .curtain-more {
+  grid-template-rows: 1fr;
+}
+
+.curtain-card:hover .curtain-in > *,
+.curtain-card.open .curtain-in > * {
+  opacity: 1;
+  transform: none;
+}
+
+.curtain-card:hover .curtain-in > :nth-child(2),
+.curtain-card.open .curtain-in > :nth-child(2) {
+  transition-delay: 0.12s;
+}
+
+.curtain-card:hover .curtain-in > :nth-child(3),
+.curtain-card.open .curtain-in > :nth-child(3) {
+  transition-delay: 0.24s;
+}

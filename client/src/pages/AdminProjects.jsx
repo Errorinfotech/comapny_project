@@ -26,6 +26,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Card, Badge, Button, ConfirmDeleteModal } from '@/components/ui';
 import ProjectEngine from '../components/ProjectEngine';
+import './CurtainCard.css';
 
 // --- Sub-Component: Project Details Modal (View Only) ---
 const AdminProjectDetailsModal = ({ project, isOpen, onClose }) => {
@@ -226,6 +227,16 @@ const AdminProjects = () => {
     const [editingProject, setEditingProject] = useState(null);
     const [detailsProject, setDetailsProject] = useState(null);
     const [projectToDelete, setProjectToDelete] = useState(null);
+    const [openCardId, setOpenCardId] = useState(null);
+
+    const FALLBACK_GRADIENTS = [
+        'radial-gradient(circle at 50% 35%, #555566, #181920 70%)',
+        'linear-gradient(160deg, #0b1730, #05070d)',
+        'linear-gradient(160deg, #2a1f2d, #0c0a10)',
+        'linear-gradient(160deg, #10281f, #06100c)',
+        'linear-gradient(160deg, #271418, #0a0406)',
+        'linear-gradient(160deg, #1f1b2e, #08060d)'
+    ];
 
     const fetchAllProjects = async () => {
         try {
@@ -364,143 +375,139 @@ const AdminProjects = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.04 }}
                     >
-                        <Card
-                            className="p-0 overflow-hidden flex flex-col justify-between h-full group cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 transition-all"
-                            hover={true}
-                            onClick={() => setDetailsProject(project)}
+                        <article
+                            className={`curtain-card ${openCardId === project._id ? 'open' : ''}`}
+                            onClick={() => {
+                                if (window.innerWidth <= 768) {
+                                    setOpenCardId((prev) => (prev === project._id ? null : project._id));
+                                } else {
+                                    setDetailsProject(project);
+                                }
+                            }}
                         >
-                            {/* Card Media Preview */}
-                            <div className="h-40 w-full relative overflow-hidden bg-slate-950">
+                            {/* Card: thumbnail = whole card. Real image / fallback gradient */}
+                            <div
+                                className="curtain-bg"
+                                style={{
+                                    background: FALLBACK_GRADIENTS[index % FALLBACK_GRADIENTS.length]
+                                }}
+                            >
                                 {project.thumbnail ? (
                                     <img
                                         src={`${BASE_URL}/uploads/${encodeURIComponent(project.thumbnail)}`}
                                         alt={project.title}
-                                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80"
+                                        className="curtain-img"
                                         onError={(e) => {
                                             if (!e.target.dataset.tried) {
                                                 e.target.dataset.tried = 'true';
                                                 e.target.src = e.target.src.replace('localhost', '127.0.0.1');
                                             } else {
                                                 e.target.style.display = 'none';
+                                                const ph = e.target.parentElement?.querySelector('.curtain-ph');
+                                                if (ph) ph.style.display = 'grid';
                                             }
                                         }}
                                     />
-                                ) : (
-                                    <div className="h-full w-full bg-gradient-to-tr from-blue-900/30 via-slate-900 to-indigo-950/40 flex items-center justify-center text-slate-600">
-                                        <FolderOpen className="h-12 w-12 stroke-1" />
-                                    </div>
-                                )}
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/30" />
+                                ) : null}
 
-                                {/* Top Left ID Badge */}
-                                <div className="absolute top-3 left-3">
-                                    <Badge variant="default" size="sm" className="bg-black/60 text-white border-white/20 backdrop-blur-md">
-                                        ID: {project._id.slice(-5)}
-                                    </Badge>
+                                <div
+                                    className="curtain-ph"
+                                    style={{ display: project.thumbnail ? 'none' : 'grid' }}
+                                >
+                                    {project.title?.toLowerCase().includes('royal') ? (
+                                        <i>R</i>
+                                    ) : (
+                                        <span>📁</span>
+                                    )}
                                 </div>
                             </div>
 
-                            {/* Card Content */}
-                            <div className="p-5 flex-1 flex flex-col justify-between">
-                                <div>
-                                    <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-sky-400 transition-colors">
-                                        {project.title}
-                                    </h3>
+                            {/* Floating Tag (Category) & ID */}
+                            <span className="curtain-tag">
+                                {project.department?.name || 'Website'}
+                            </span>
+                            <span className="curtain-tag curtain-tag-right">
+                                ID: {project._id.slice(-5)}
+                            </span>
 
-                                    {/* Author & Dept meta */}
-                                    <div className="flex items-center space-x-3 text-xs text-slate-500 dark:text-slate-400 mb-3 font-medium">
-                                        <div className="flex items-center space-x-1">
-                                            <User className="h-3.5 w-3.5 text-blue-600" />
-                                            <span>@{project.employee?.username || 'member'}</span>
+                            {/* Card Info Bottom Curtain */}
+                            <div className="curtain-info">
+                                <h3 className="curtain-title">{project.title}</h3>
+                                <div className="curtain-meta">
+                                    @{project.employee?.username || 'member'} · {project.department?.name || 'developers'}
+                                </div>
+
+                                <div className="curtain-more">
+                                    <div className="curtain-in">
+                                        <p className="curtain-desc">
+                                            {project.description || 'Designed and developed a professional business solution to establish high quality digital presence.'}
+                                        </p>
+
+                                        <div className="curtain-foot">
+                                            <div className="flex items-center gap-2">
+                                                <span>📅 {new Date(project.createdAt).toLocaleDateString()}</span>
+                                                {project.liveUrl && (
+                                                    <a
+                                                        href={project.liveUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                        className="p-1 rounded-full bg-white/10 hover:bg-white/25 transition-all text-white hover:scale-110"
+                                                        title="View Live Demo"
+                                                    >
+                                                        <ExternalLink className="w-3.5 h-3.5 inline" />
+                                                    </a>
+                                                )}
+                                                {project.githubUrl && (
+                                                    <a
+                                                        href={project.githubUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                        className="p-1 rounded-full bg-white/10 hover:bg-white/25 transition-all text-white hover:scale-110"
+                                                        title="View GitHub Repository"
+                                                    >
+                                                        <Code className="w-3.5 h-3.5 inline" />
+                                                    </a>
+                                                )}
+                                            </div>
+                                            <span className="curtain-files">{project.files?.length || 0} Files</span>
                                         </div>
-                                        <span>•</span>
-                                        <div className="flex items-center space-x-1">
-                                            <Briefcase className="h-3.5 w-3.5 text-slate-400" />
-                                            <span>{project.department?.name || 'Global'}</span>
+
+                                        <div className="curtain-act">
+                                            <span
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setEditingProject(project);
+                                                    setShowUploadModal(true);
+                                                }}
+                                                title="Edit Project"
+                                            >
+                                                ✎ Edit
+                                            </span>
+                                            <span
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setProjectToDelete(project);
+                                                }}
+                                                title="Delete Project"
+                                            >
+                                                🗑 Delete
+                                            </span>
+                                            <span
+                                                className="curtain-act-details"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setDetailsProject(project);
+                                                }}
+                                            >
+                                                Details ↗
+                                            </span>
                                         </div>
                                     </div>
-
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mb-4">
-                                        {project.description || 'Enterprise project repository and asset storage.'}
-                                    </p>
-                                </div>
-
-                                {/* External Links & Files Count */}
-                                <div className="pt-3 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between">
-                                    <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
-                                        {project.liveUrl && (
-                                            <a
-                                                href={project.liveUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                                                title="View Live Demo"
-                                            >
-                                                <ExternalLink className="h-4 w-4" />
-                                            </a>
-                                        )}
-                                        {project.githubUrl && (
-                                            <a
-                                                href={project.githubUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                                                title="View GitHub Repository"
-                                            >
-                                                <Code className="h-4 w-4" />
-                                            </a>
-                                        )}
-                                    </div>
-
-                                    <Badge variant="cyan" size="sm">
-                                        <FileText className="h-3 w-3 mr-1" />
-                                        {project.files?.length || 0} Files
-                                    </Badge>
                                 </div>
                             </div>
-
-                            {/* Card Footer with Details / Edit / Delete */}
-                            <div className="px-5 py-2.5 bg-slate-50/70 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400 font-medium">
-                                <div className="flex items-center space-x-1.5">
-                                    <Calendar className="h-3 w-3" />
-                                    <span>{new Date(project.createdAt).toLocaleDateString()}</span>
-                                </div>
-
-                                <div className="flex items-center space-x-3" onClick={(e) => e.stopPropagation()}>
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setEditingProject(project);
-                                            setShowUploadModal(true);
-                                        }}
-                                        className="text-slate-500 hover:text-blue-600 dark:hover:text-sky-300 font-semibold flex items-center space-x-1 transition-colors cursor-pointer"
-                                        title="Edit Project"
-                                    >
-                                        <Edit className="h-3.5 w-3.5" />
-                                        <span>Edit</span>
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        onClick={() => setProjectToDelete(project)}
-                                        className="text-slate-500 hover:text-red-600 dark:hover:text-red-400 font-semibold flex items-center space-x-1 transition-colors cursor-pointer"
-                                        title="Delete Project"
-                                    >
-                                        <Trash2 className="h-3.5 w-3.5" />
-                                        <span>Delete</span>
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        onClick={() => setDetailsProject(project)}
-                                        className="text-blue-600 hover:underline font-bold flex items-center space-x-0.5 cursor-pointer ml-1"
-                                    >
-                                        <span>Details</span>
-                                        <ArrowUpRight className="h-3.5 w-3.5" />
-                                    </button>
-                                </div>
-                            </div>
-                        </Card>
+                        </article>
                     </motion.div>
                 ))}
 
