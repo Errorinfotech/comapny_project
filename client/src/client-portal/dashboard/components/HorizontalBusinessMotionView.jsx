@@ -94,107 +94,7 @@ export const BUSINESS_SECTORS = [
   }
 ];
 
-// Rich fallback showcases when no database projects exist for a service yet
-const FALLBACK_SHOWCASES = {
-    website: [
-        {
-            _id: 'fb-web-1',
-            title: 'Modern E-Commerce Portal',
-            description: 'Full-stack enterprise e-commerce platform with automated payment integration, product catalogs, and real-time order tracking.',
-            thumbnail: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
-            category: 'Website Development',
-            liveUrl: 'https://errorinfotech.in'
-        },
-        {
-            _id: 'fb-web-2',
-            title: 'Corporate Brand Showcase',
-            description: 'Ultra-fast responsive corporate digital showroom designed for high conversion, search engine authority, and customer retention.',
-            thumbnail: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80',
-            category: 'Website Development',
-            liveUrl: 'https://errorinfotech.in'
-        },
-        {
-            _id: 'fb-web-3',
-            title: 'SaaS Web Application',
-            description: 'Scalable cloud-native web application suite with automated analytics, secure role-based auth, and data visualization dashboard.',
-            thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
-            category: 'Website Development',
-            liveUrl: 'https://errorinfotech.in'
-        }
-    ],
-    software: [
-        {
-            _id: 'fb-soft-1',
-            title: 'Enterprise Management ERP',
-            description: 'Custom internal ERP & CRM system built for centralized company workflows, billing, user access, and team monitoring.',
-            thumbnail: 'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=800&q=80',
-            category: 'Software Solutions',
-            liveUrl: 'https://errorinfotech.in'
-        },
-        {
-            _id: 'fb-soft-2',
-            title: 'Cloud Vault & Storage Engine',
-            description: 'High security decentralized asset storage architecture with end-to-end encryption and fast multi-device synchronization.',
-            thumbnail: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80',
-            category: 'Software Solutions',
-            liveUrl: 'https://errorinfotech.in'
-        },
-        {
-            _id: 'fb-soft-3',
-            title: 'Real-time Operations Platform',
-            description: 'Event-driven real time operations platform with automated microservices, webhook integrations, and logging pipelines.',
-            thumbnail: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80',
-            category: 'Software Solutions',
-            liveUrl: 'https://errorinfotech.in'
-        }
-    ],
-    graphics: [
-        {
-            _id: 'fb-gfx-1',
-            title: 'Brand Identity & Luxury Design',
-            description: 'Comprehensive brand typography, custom vector icon systems, color psychology, and corporate identity styleguides.',
-            thumbnail: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=800&q=80',
-            category: 'Graphic Designing'
-        },
-        {
-            _id: 'fb-gfx-2',
-            title: 'UI/UX Mobile & Web Concept',
-            description: 'Next-gen glassmorphism interface design with micro-interactions, custom interactive wireframes, and design system tokens.',
-            thumbnail: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=800&q=80',
-            category: 'Graphic Designing'
-        },
-        {
-            _id: 'fb-gfx-3',
-            title: 'Marketing Collateral & Packaging',
-            description: 'High-impact 3D product packaging mockups, social media creatives, print assets, and outdoor banners.',
-            thumbnail: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=800&q=80',
-            category: 'Graphic Designing'
-        }
-    ],
-    'digital-marketing': [
-        {
-            _id: 'fb-mkt-1',
-            title: 'SEO & Organic Growth Campaign',
-            description: 'Data-driven technical SEO auditing, backlink strategy, keyword clustering, and high conversion landing pages.',
-            thumbnail: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=800&q=80',
-            category: 'Digital Marketing'
-        },
-        {
-            _id: 'fb-mkt-2',
-            title: 'Performance Ads & Meta Marketing',
-            description: 'Targeted ROI-focused ad campaigns on Google Search, Meta, and LinkedIn with dynamic retargeting funnels.',
-            thumbnail: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80',
-            category: 'Digital Marketing'
-        },
-        {
-            _id: 'fb-mkt-3',
-            title: 'Social Media Management & Branding',
-            description: 'End-to-end brand storytelling, high engagement short-form content scheduling, and community growth.',
-            thumbnail: 'https://images.unsplash.com/photo-1557838923-2985c318be48?auto=format&fit=crop&w=800&q=80',
-            category: 'Digital Marketing'
-        }
-    ]
-};
+
 
 const CATEGORY_DEFAULT_IMAGES = {
     website: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
@@ -266,6 +166,7 @@ const HorizontalBusinessMotionView = ({
 
         if (currentServiceFilter === 'website') {
             matched = all.filter(p => {
+                if (p.clientCategory) return p.clientCategory === 'website';
                 const dept = (p.department?.name || '').toLowerCase();
                 const title = (p.title || '').toLowerCase();
                 const desc = (p.description || '').toLowerCase();
@@ -275,6 +176,7 @@ const HorizontalBusinessMotionView = ({
             });
         } else if (currentServiceFilter === 'software') {
             matched = all.filter(p => {
+                if (p.clientCategory) return p.clientCategory === 'software';
                 const dept = (p.department?.name || '').toLowerCase();
                 const title = (p.title || '').toLowerCase();
                 const desc = (p.description || '').toLowerCase();
@@ -284,6 +186,7 @@ const HorizontalBusinessMotionView = ({
             });
         } else if (currentServiceFilter === 'graphics') {
             matched = all.filter(p => {
+                if (p.clientCategory) return p.clientCategory === 'graphics';
                 const dept = (p.department?.name || '').toLowerCase();
                 const title = (p.title || '').toLowerCase();
                 const desc = (p.description || '').toLowerCase();
@@ -293,6 +196,7 @@ const HorizontalBusinessMotionView = ({
             });
         } else if (currentServiceFilter === 'digital-marketing') {
             matched = all.filter(p => {
+                if (p.clientCategory) return p.clientCategory === 'digital-marketing';
                 const dept = (p.department?.name || '').toLowerCase();
                 const title = (p.title || '').toLowerCase();
                 const desc = (p.description || '').toLowerCase();
@@ -302,11 +206,7 @@ const HorizontalBusinessMotionView = ({
             });
         }
 
-        if (matched.length > 0) {
-            return matched;
-        }
-
-        return FALLBACK_SHOWCASES[currentServiceFilter] || FALLBACK_SHOWCASES.website;
+        return matched;
     }, [dbProjects, currentServiceFilter, subtypeCounts]);
 
     const total = activeCards.length;
@@ -321,18 +221,19 @@ const HorizontalBusinessMotionView = ({
     };
 
     const goToPrev = useCallback(() => {
-        if (isZoomingOut) return;
+        if (isZoomingOut || total === 0) return;
         setActiveIndex((prev) => (prev > 0 ? prev - 1 : total - 1));
     }, [isZoomingOut, total]);
 
     const goToNext = useCallback(() => {
-        if (isZoomingOut) return;
+        if (isZoomingOut || total === 0) return;
         setActiveIndex((prev) => (prev < total - 1 ? prev + 1 : 0));
     }, [isZoomingOut, total]);
 
     // Keyboard navigation (ArrowLeft & ArrowRight)
     useEffect(() => {
         const handleKeyDown = (e) => {
+            if (total === 0) return;
             if (e.key === 'ArrowLeft') {
                 goToPrev();
             } else if (e.key === 'ArrowRight') {
@@ -345,7 +246,7 @@ const HorizontalBusinessMotionView = ({
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [goToPrev, goToNext, activeIndex, activeCards]);
+    }, [goToPrev, goToNext, activeIndex, activeCards, total]);
 
     // Non-passive wheel event listener: explicitly block browser history swipe-back gestures!
     useEffect(() => {
@@ -587,16 +488,29 @@ const HorizontalBusinessMotionView = ({
                 </div>
             </div>
 
-            {/* 3D Coverflow Carousel Stage */}
-            <div 
-                ref={carouselRef}
-                className="relative w-full h-[430px] sm:h-[470px] flex items-center justify-center overflow-hidden py-4 cursor-grab active:cursor-grabbing select-none"
-                style={{ 
-                    perspective: '1100px',
-                    overscrollBehaviorX: 'none',
-                    touchAction: 'pan-y'
-                }}
-            >
+            {/* 3D Coverflow Carousel Stage / Empty State */}
+            {total === 0 ? (
+                <div className="relative w-full h-[360px] sm:h-[420px] flex flex-col items-center justify-center p-8 text-center rounded-3xl border border-dashed border-sky-200/80 dark:border-[#192b68] bg-white/50 dark:bg-[#08102a]/50 backdrop-blur-md my-4 shadow-sm">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/10 to-indigo-500/20 border border-blue-300/30 flex items-center justify-center mb-4 text-[#1E3A8A] dark:text-sky-400">
+                        <Folder className="w-8 h-8 opacity-70" />
+                    </div>
+                    <h3 className="text-xl font-extrabold text-slate-800 dark:text-white tracking-tight mb-2">
+                        No Projects in {currentFilterObj?.label || 'This Category'} Yet
+                    </h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md leading-relaxed">
+                        There are currently no projects published in this category. As soon as Admin publishes projects, they will automatically appear here dynamically.
+                    </p>
+                </div>
+            ) : (
+                <div 
+                    ref={carouselRef}
+                    className="relative w-full h-[430px] sm:h-[470px] flex items-center justify-center overflow-hidden py-4 cursor-grab active:cursor-grabbing select-none"
+                    style={{ 
+                        perspective: '1100px',
+                        overscrollBehaviorX: 'none',
+                        touchAction: 'pan-y'
+                    }}
+                >
                 {/* Drag interaction wrapper */}
                 <motion.div
                     drag="x"
@@ -796,6 +710,7 @@ const HorizontalBusinessMotionView = ({
                     <ChevronRight className="w-6 h-6 translate-x-0.5" />
                 </button>
             </div>
+            )}
 
             {/* View-Only Project Details Modal */}
             <ProjectDetailsModal

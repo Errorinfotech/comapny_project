@@ -110,6 +110,17 @@ const AdminProjectDetailsModal = ({ project, isOpen, onClose }) => {
                                 <FileCode className="h-3.5 w-3.5 text-slate-400" />
                                 <span>{project.files?.length || 0} Files</span>
                             </div>
+                            {project.showOnClientPortal ? (
+                                <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 font-semibold">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                    <span>Client Portal ({project.clientCategory || 'General'})</span>
+                                </div>
+                            ) : (
+                                <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-semibold">
+                                    <span className="w-2 h-2 rounded-full bg-slate-400" />
+                                    <span>Internal Workspace</span>
+                                </div>
+                            )}
                         </div>
 
                         {/* Description */}
@@ -222,6 +233,8 @@ const AdminProjects = () => {
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [portalFilter, setPortalFilter] = useState('all'); // 'all' | 'portal' | 'internal'
+    const [togglingId, setTogglingId] = useState(null);
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [editingProject, setEditingProject] = useState(null);
     const [detailsProject, setDetailsProject] = useState(null);
@@ -245,6 +258,22 @@ const AdminProjects = () => {
         }
     };
 
+    const handleToggleClientPortal = async (projectId) => {
+        try {
+            setTogglingId(projectId);
+            const { data } = await api.patch(`/projects/${projectId}/toggle-portal`);
+            setProjects(prev => prev.map(p => p._id === projectId ? {
+                ...p,
+                showOnClientPortal: data.showOnClientPortal,
+                clientCategory: data.clientCategory
+            } : p));
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to update Client Portal status.');
+        } finally {
+            setTogglingId(null);
+        }
+    };
+
     const executeDeleteProject = async () => {
         if (!projectToDelete) return;
         try {
@@ -260,11 +289,21 @@ const AdminProjects = () => {
         fetchAllProjects();
     }, [employeeId, deptId, deptName]);
 
-    const filteredProjects = projects.filter(p =>
-        p.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.employee?.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.department?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredProjects = projects.filter(p => {
+        const matchesSearch =
+            p.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            p.employee?.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            p.department?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+
+        if (!matchesSearch) return false;
+
+        if (portalFilter === 'portal') return Boolean(p.showOnClientPortal);
+        if (portalFilter === 'internal') return !p.showOnClientPortal;
+        return true;
+    });
+
+    const portalCount = projects.filter(p => p.showOnClientPortal).length;
+    const internalCount = projects.filter(p => !p.showOnClientPortal).length;
 
     if (loading) {
         return (
@@ -343,16 +382,56 @@ const AdminProjects = () => {
                 </div>
             </div>
 
-            {/* Search Filter */}
-            <div className="relative max-w-md">
-                <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-slate-400" />
-                <input
-                    type="text"
-                    placeholder="Search by title, author (@employee) or department..."
-                    className="w-full bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs font-medium focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 focus:outline-none text-slate-900 dark:text-white placeholder:text-slate-400 shadow-sm"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
+            {/* Search Filter & Segment Tabs */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+                <div className="relative max-w-md w-full">
+                    <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-slate-400" />
+                    <input
+                        type="text"
+                        placeholder="Search by title, author (@employee) or department..."
+                        className="w-full bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs font-medium focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 focus:outline-none text-slate-900 dark:text-white placeholder:text-slate-400 shadow-sm"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+
+                {/* Filter Tabs: All / Client Portal / Internal */}
+                <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold shrink-0 self-start sm:self-auto">
+                    <button
+                        type="button"
+                        onClick={() => setPortalFilter('all')}
+                        className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                            portalFilter === 'all'
+                                ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-sky-400 shadow-xs'
+                                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                        }`}
+                    >
+                        All ({projects.length})
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setPortalFilter('portal')}
+                        className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                            portalFilter === 'portal'
+                                ? 'bg-emerald-500 text-white shadow-xs'
+                                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                        }`}
+                    >
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        <span>Client Portal ({portalCount})</span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setPortalFilter('internal')}
+                        className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                            portalFilter === 'internal'
+                                ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs'
+                                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                        }`}
+                    >
+                        Internal ({internalCount})
+                    </button>
+                </div>
             </div>
 
             {/* Projects Grid */}
@@ -392,11 +471,38 @@ const AdminProjects = () => {
                                 )}
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/30" />
 
-                                {/* Top Left ID Badge */}
-                                <div className="absolute top-3 left-3">
-                                    <Badge variant="default" size="sm" className="bg-black/60 text-white border-white/20 backdrop-blur-md">
+                                {/* Top Badges: ID + 1-Click Client Portal Toggle */}
+                                <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10 pointer-events-none">
+                                    <Badge variant="default" size="sm" className="bg-black/60 text-white border-white/20 backdrop-blur-md pointer-events-auto">
                                         ID: {project._id.slice(-5)}
                                     </Badge>
+
+                                    <button
+                                        type="button"
+                                        disabled={togglingId === project._id}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleToggleClientPortal(project._id);
+                                        }}
+                                        className={`pointer-events-auto px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide backdrop-blur-md border transition-all flex items-center gap-1.5 shadow-lg cursor-pointer ${
+                                            project.showOnClientPortal
+                                                ? 'bg-emerald-500/90 text-white border-emerald-400/50 hover:bg-emerald-600 shadow-emerald-500/20'
+                                                : 'bg-black/60 text-slate-300 border-white/20 hover:bg-black/80 hover:text-white'
+                                        } ${togglingId === project._id ? 'opacity-50 animate-pulse' : ''}`}
+                                        title={
+                                            project.showOnClientPortal
+                                                ? 'Visible on Client Portal showcase! Click to make private.'
+                                                : 'Internal only. Click to publish on Client Portal!'
+                                        }
+                                    >
+                                        <span className={`w-1.5 h-1.5 rounded-full ${project.showOnClientPortal ? 'bg-white animate-pulse' : 'bg-slate-400'}`} />
+                                        <span>{project.showOnClientPortal ? 'On Portal' : 'Private'}</span>
+                                        {project.showOnClientPortal && project.clientCategory && (
+                                            <span className="opacity-80 font-mono text-[9px] uppercase">
+                                                [{project.clientCategory}]
+                                            </span>
+                                        )}
+                                    </button>
                                 </div>
                             </div>
 
