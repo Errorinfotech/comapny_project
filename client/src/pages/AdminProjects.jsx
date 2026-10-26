@@ -14,6 +14,7 @@ import {
     Layers,
     Plus,
     ArrowLeft,
+    ArrowRight,
     Edit,
     Trash2,
     MoreVertical,
@@ -486,12 +487,8 @@ const AdminProjects = () => {
                                     />
                                 ) : null}
 
-                                {/* Top Badges: ID + 1-Click Client Portal Toggle */}
-                                <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10 pointer-events-none">
-                                    <Badge variant="default" size="sm" className="bg-black/60 text-white border-white/20 backdrop-blur-md pointer-events-auto">
-                                        ID: {project._id.slice(-5)}
-                                    </Badge>
-
+                                {/* Top Right: 1-Click Client Portal Toggle */}
+                                <div className="absolute top-3 right-3 z-10 pointer-events-none">
                                     <button
                                         type="button"
                                         disabled={togglingId === project._id}
@@ -520,14 +517,6 @@ const AdminProjects = () => {
                                 </div>
                             </div>
 
-                            {/* Floating Tag (Category) & ID */}
-                            <span className="curtain-tag">
-                                {project.department?.name || 'Website'}
-                            </span>
-                            <span className="curtain-tag curtain-tag-right">
-                                ID: {project._id.slice(-5)}
-                            </span>
-
                             {/* Card Info Bottom Curtain */}
                             <div className="curtain-info">
                                 <h3 className="curtain-title">{project.title}</h3>
@@ -543,30 +532,29 @@ const AdminProjects = () => {
 
                                         <div className="curtain-foot">
                                             <div className="flex items-center gap-2">
-                                                <span>📅 {new Date(project.createdAt).toLocaleDateString()}</span>
-                                                {project.liveUrl && (
+                                                {project.liveUrl ? (
                                                     <a
                                                         href={project.liveUrl}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         onClick={(e) => e.stopPropagation()}
-                                                        className="p-1 rounded-full bg-white/10 hover:bg-white/25 transition-all text-white hover:scale-110"
-                                                        title="View Live Demo"
+                                                        className="inline-flex items-center gap-1 text-white/90 hover:text-white hover:underline cursor-pointer"
+                                                        title="Open Live Preview"
                                                     >
-                                                        <ExternalLink className="w-3.5 h-3.5 inline" />
+                                                        <span>Preview</span>
+                                                        <ExternalLink className="w-3.5 h-3.5 inline opacity-80" />
                                                     </a>
-                                                )}
-                                                {project.githubUrl && (
-                                                    <a
-                                                        href={project.githubUrl}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        onClick={(e) => e.stopPropagation()}
-                                                        className="p-1 rounded-full bg-white/10 hover:bg-white/25 transition-all text-white hover:scale-110"
-                                                        title="View GitHub Repository"
+                                                ) : (
+                                                    <span
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setDetailsProject(project);
+                                                        }}
+                                                        className="inline-flex items-center gap-1 text-white/90 hover:text-white hover:underline cursor-pointer"
+                                                        title="Preview Details"
                                                     >
-                                                        <Code className="w-3.5 h-3.5 inline" />
-                                                    </a>
+                                                        <span>Preview</span>
+                                                    </span>
                                                 )}
                                             </div>
                                             <span className="curtain-files">{project.files?.length || 0} Files</span>
@@ -593,13 +581,14 @@ const AdminProjects = () => {
                                                 🗑 Delete
                                             </span>
                                             <span
-                                                className="curtain-act-details"
+                                                className="curtain-act-details inline-flex items-center gap-1"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     setDetailsProject(project);
                                                 }}
                                             >
-                                                Details ↗
+                                                <span>Details</span>
+                                                <ArrowRight className="w-3.5 h-3.5 inline stroke-[2.5]" />
                                             </span>
                                         </div>
                                     </div>
