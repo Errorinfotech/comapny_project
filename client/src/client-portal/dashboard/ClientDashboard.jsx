@@ -142,6 +142,7 @@ const ClientDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [isSupportOpen, setIsSupportOpen] = useState(false);
+    const [selectedServiceFilter, setSelectedServiceFilter] = useState('all-businesses');
 
     // Fetch dynamic client links from backend
     const fetchLinks = async () => {
@@ -243,6 +244,7 @@ const ClientDashboard = () => {
 
     // Back to Stage 1 (Business Explorer)
     const handleBackToBusinesses = () => {
+        setSelectedServiceFilter('all-businesses');
         setCurrentStage(1);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -303,6 +305,8 @@ const ClientDashboard = () => {
                             configuredCounts={sectorConfiguredMap}
                             subtypeCounts={subtypeCountsMap}
                             onOpenSupport={() => setIsSupportOpen(true)}
+                            activeServiceFilter={selectedServiceFilter}
+                            onServiceFilterChange={setSelectedServiceFilter}
                         />
                     </motion.div>
                 )}

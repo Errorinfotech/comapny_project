@@ -66,8 +66,8 @@ const ClientHeader = ({
 
                 {/* Right Action Controls */}
                 <div className="flex items-center space-x-2 sm:space-x-3">
-                    {/* Interactive Workspace Toggle Pill (Office / Client) */}
-                    {user && user.role !== 'client' && (
+                    {/* Interactive Workspace Toggle Pill (Admin Only) */}
+                    {user && user.role === 'admin' && (
                         <div 
                             className="inline-flex items-center p-1 rounded-full bg-[#ebf3fc] dark:bg-[#08112d] border border-sky-200/80 dark:border-[#14235a] shadow-inner select-none relative"
                             title="Switch Workspace: Office or Client Portal"

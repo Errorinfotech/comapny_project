@@ -107,12 +107,11 @@ const createProject = async (req, res) => {
 const getMyProjects = async (req, res) => {
     try {
         const projects = await Project.find({
-            employee: req.user._id,
-            $or: [
-                { scope: 'workspace' },
-                { scope: { $exists: false } }
-            ]
-        }).sort({ createdAt: -1 });
+            employee: req.user._id
+        })
+        .populate('department', 'name')
+        .populate('employee', 'username email')
+        .sort({ createdAt: -1 });
         res.json(projects);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
