@@ -3,7 +3,7 @@ import api from '../api';
 import { Plus, Briefcase, Trash2, Edit, Users, FolderOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Button, Card, Input, Modal, Badge } from '@/components/ui';
+import { Button, Card, Input, Modal, Badge, ConfirmDeleteModal } from '@/components/ui';
 
 const Departments = () => {
     const navigate = useNavigate();
@@ -11,6 +11,7 @@ const Departments = () => {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingDept, setEditingDept] = useState(null);
+    const [deptToDelete, setDeptToDelete] = useState(null);
     const [formData, setFormData] = useState({ name: '', description: '' });
     const [saving, setSaving] = useState(false);
 
@@ -47,14 +48,14 @@ const Departments = () => {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this department?')) {
-            try {
-                await api.delete(`/admin/departments/${id}`);
-                fetchDepartments();
-            } catch (err) {
-                alert(err.response?.data?.message || 'Error deleting department');
-            }
+    const executeDeleteDept = async () => {
+        if (!deptToDelete) return;
+        try {
+            await api.delete(`/admin/departments/${deptToDelete._id}`);
+            setDeptToDelete(null);
+            fetchDepartments();
+        } catch (err) {
+            alert(err.response?.data?.message || 'Error deleting department');
         }
     };
 
@@ -131,8 +132,8 @@ const Departments = () => {
                                             <Edit className="h-4 w-4" />
                                         </button>
                                         <button
-                                            onClick={() => handleDelete(dept._id)}
-                                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
+                                            onClick={() => setDeptToDelete(dept)}
+                                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
                                             title="Delete Department"
                                         >
                                             <Trash2 className="h-4 w-4" />
@@ -225,6 +226,17 @@ const Departments = () => {
                     </div>
                 </form>
             </Modal>
+
+            {/* Common Confirm Delete Modal */}
+            <ConfirmDeleteModal
+                isOpen={Boolean(deptToDelete)}
+                onClose={() => setDeptToDelete(null)}
+                onConfirm={executeDeleteDept}
+                title="Delete Department?"
+                itemName={deptToDelete?.name}
+                message="Are you sure you want to delete this department? Employees and projects associated with this department may need to be reassigned."
+                confirmText="Delete Department"
+            />
         </div>
     );
 };

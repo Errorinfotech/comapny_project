@@ -1,87 +1,207 @@
-import React, { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
     ChevronLeft, ChevronRight, Check, ArrowRight,
     Briefcase, Factory, ShoppingBag, UtensilsCrossed,
     GraduationCap, Car, Home, HeartPulse,
     Gamepad2, Compass, Wrench, Sparkles, Building2,
-    Loader2, HelpCircle
+    HelpCircle, Globe, Code, Palette, Megaphone,
+    ExternalLink, Eye, Folder, FileText
 } from 'lucide-react';
+import api, { BASE_URL } from '../../../api';
+import ProjectDetailsModal from '../../../components/ProjectDetailsModal';
+
+export const SERVICE_FILTERS = [
+    { id: 'all-businesses', label: 'All Businesses', icon: Building2 },
+    { id: 'website', label: 'Website', icon: Globe },
+    { id: 'software', label: 'Software', icon: Code },
+    { id: 'graphics', label: 'Graphics', icon: Palette },
+    { id: 'digital-marketing', label: 'Digital Marketing', icon: Megaphone }
+];
 
 export const BUSINESS_SECTORS = [
   {
     type: "Service Business",
     icon: Briefcase,
     units: 8,
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80" // Modern glass corporate tower
+    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80"
   },
   {
     type: "Manufacturing / Industrial",
     icon: Factory,
     units: 10,
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80" // High-tech industrial automation
+    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80"
   },
   {
     type: "Retail & Shopping",
     icon: ShoppingBag,
     units: 13,
-    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80" // Luxury retail fashion store
+    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80"
   },
   {
     type: "Food & Beverage",
     icon: UtensilsCrossed,
     units: 10,
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80" // Modern restaurant dining lounge
+    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80"
   },
   {
     type: "Education",
     icon: GraduationCap,
     units: 8,
-    image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80" // Modern university campus
+    image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80"
   },
   {
     type: "Automobile",
     icon: Car,
     units: 6,
-    image: "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80" // Luxury automobile showroom
+    image: "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80"
   },
   {
     type: "Home & Lifestyle",
     icon: Home,
     units: 5,
-    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80" // High-end interior architectural design
+    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80"
   },
   {
     type: "Health & Wellness",
     icon: HeartPulse,
     units: 7,
-    image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80" // Modern healthcare clinical center
+    image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80"
   },
   {
     type: "Entertainment",
     icon: Gamepad2,
     units: 2,
-    image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80" // Cyber entertainment & gaming arena
+    image: "https://images.unsplash.com/photo-1511512578044-dfb367046420?auto=format&fit=crop&w=800&q=80"
   },
   {
     type: "Travel",
     icon: Compass,
     units: 2,
-    image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80" // Luxury travel & global tourism
+    image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80"
   },
   {
     type: "Repair & Service",
     icon: Wrench,
     units: 6,
-    image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80" // Precision technical maintenance & electronics
+    image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80"
   },
   {
     type: "Additional Retail & Events",
     icon: Sparkles,
     units: 9,
-    image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80" // Grand banquet celebration & event gala
+    image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80"
   }
 ];
+
+// Rich fallback showcases when no database projects exist for a service yet
+const FALLBACK_SHOWCASES = {
+    website: [
+        {
+            _id: 'fb-web-1',
+            title: 'Modern E-Commerce Portal',
+            description: 'Full-stack enterprise e-commerce platform with automated payment integration, product catalogs, and real-time order tracking.',
+            thumbnail: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
+            category: 'Website Development',
+            liveUrl: 'https://errorinfotech.in'
+        },
+        {
+            _id: 'fb-web-2',
+            title: 'Corporate Brand Showcase',
+            description: 'Ultra-fast responsive corporate digital showroom designed for high conversion, search engine authority, and customer retention.',
+            thumbnail: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80',
+            category: 'Website Development',
+            liveUrl: 'https://errorinfotech.in'
+        },
+        {
+            _id: 'fb-web-3',
+            title: 'SaaS Web Application',
+            description: 'Scalable cloud-native web application suite with automated analytics, secure role-based auth, and data visualization dashboard.',
+            thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
+            category: 'Website Development',
+            liveUrl: 'https://errorinfotech.in'
+        }
+    ],
+    software: [
+        {
+            _id: 'fb-soft-1',
+            title: 'Enterprise Management ERP',
+            description: 'Custom internal ERP & CRM system built for centralized company workflows, billing, user access, and team monitoring.',
+            thumbnail: 'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=800&q=80',
+            category: 'Software Solutions',
+            liveUrl: 'https://errorinfotech.in'
+        },
+        {
+            _id: 'fb-soft-2',
+            title: 'Cloud Vault & Storage Engine',
+            description: 'High security decentralized asset storage architecture with end-to-end encryption and fast multi-device synchronization.',
+            thumbnail: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80',
+            category: 'Software Solutions',
+            liveUrl: 'https://errorinfotech.in'
+        },
+        {
+            _id: 'fb-soft-3',
+            title: 'Real-time Operations Platform',
+            description: 'Event-driven real time operations platform with automated microservices, webhook integrations, and logging pipelines.',
+            thumbnail: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80',
+            category: 'Software Solutions',
+            liveUrl: 'https://errorinfotech.in'
+        }
+    ],
+    graphics: [
+        {
+            _id: 'fb-gfx-1',
+            title: 'Brand Identity & Luxury Design',
+            description: 'Comprehensive brand typography, custom vector icon systems, color psychology, and corporate identity styleguides.',
+            thumbnail: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=800&q=80',
+            category: 'Graphic Designing'
+        },
+        {
+            _id: 'fb-gfx-2',
+            title: 'UI/UX Mobile & Web Concept',
+            description: 'Next-gen glassmorphism interface design with micro-interactions, custom interactive wireframes, and design system tokens.',
+            thumbnail: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=800&q=80',
+            category: 'Graphic Designing'
+        },
+        {
+            _id: 'fb-gfx-3',
+            title: 'Marketing Collateral & Packaging',
+            description: 'High-impact 3D product packaging mockups, social media creatives, print assets, and outdoor banners.',
+            thumbnail: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=800&q=80',
+            category: 'Graphic Designing'
+        }
+    ],
+    'digital-marketing': [
+        {
+            _id: 'fb-mkt-1',
+            title: 'SEO & Organic Growth Campaign',
+            description: 'Data-driven technical SEO auditing, backlink strategy, keyword clustering, and high conversion landing pages.',
+            thumbnail: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=800&q=80',
+            category: 'Digital Marketing'
+        },
+        {
+            _id: 'fb-mkt-2',
+            title: 'Performance Ads & Meta Marketing',
+            description: 'Targeted ROI-focused ad campaigns on Google Search, Meta, and LinkedIn with dynamic retargeting funnels.',
+            thumbnail: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80',
+            category: 'Digital Marketing'
+        },
+        {
+            _id: 'fb-mkt-3',
+            title: 'Social Media Management & Branding',
+            description: 'End-to-end brand storytelling, high engagement short-form content scheduling, and community growth.',
+            thumbnail: 'https://images.unsplash.com/photo-1557838923-2985c318be48?auto=format&fit=crop&w=800&q=80',
+            category: 'Digital Marketing'
+        }
+    ]
+};
+
+const CATEGORY_DEFAULT_IMAGES = {
+    website: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
+    software: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
+    graphics: "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=800&q=80",
+    'digital-marketing': "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=800&q=80"
+};
 
 const HorizontalBusinessMotionView = ({
     industries = [],
@@ -89,34 +209,220 @@ const HorizontalBusinessMotionView = ({
     onSelectBusiness,
     configuredCounts = {},
     subtypeCounts = {},
-    onOpenSupport
+    onOpenSupport,
+    activeServiceFilter = 'all-businesses',
+    onServiceFilterChange
 }) => {
-    const scrollContainerRef = useRef(null);
+    const [localServiceFilter, setLocalServiceFilter] = useState(activeServiceFilter);
+    const [dbProjects, setDbProjects] = useState([]);
+    const [loadingProjects, setLoadingProjects] = useState(true);
+    const [activeIndex, setActiveIndex] = useState(0);
     const [clickedCard, setClickedCard] = useState(null);
     const [isZoomingOut, setIsZoomingOut] = useState(false);
+    const [detailsProject, setDetailsProject] = useState(null);
 
-    const handleScroll = (direction) => {
-        if (!scrollContainerRef.current) return;
-        const scrollAmount = direction === 'left' ? -340 : 340;
-        scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    };
+    const carouselRef = useRef(null);
+    const lastWheelTime = useRef(0);
 
-    const handleWheel = (e) => {
-        if (!scrollContainerRef.current) return;
-        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-            scrollContainerRef.current.scrollLeft += e.deltaY;
+    const currentServiceFilter = activeServiceFilter !== undefined ? activeServiceFilter : localServiceFilter;
+
+    // Fetch projects dynamically from /api/projects/portal
+    useEffect(() => {
+        let isMounted = true;
+        const fetchProjects = async () => {
+            try {
+                setLoadingProjects(true);
+                const { data } = await api.get('/projects/portal');
+                if (isMounted) {
+                    setDbProjects(Array.isArray(data) ? data : []);
+                }
+            } catch (err) {
+                console.error("Failed to fetch portal projects", err);
+            } finally {
+                if (isMounted) setLoadingProjects(false);
+            }
+        };
+        fetchProjects();
+        return () => { isMounted = false; };
+    }, []);
+
+    // Filter projects dynamically based on current selected service filter
+    const activeCards = useMemo(() => {
+        // 1. "All Businesses" filter: displays all Commercial Business Sectors
+        if (currentServiceFilter === 'all-businesses') {
+            return BUSINESS_SECTORS.map((sector) => ({
+                _id: sector.type,
+                title: sector.type,
+                type: sector.type,
+                units: subtypeCounts[sector.type] || sector.units,
+                image: sector.image,
+                isBusinessSector: true
+            }));
+        }
+
+        // 2. Service Project Filters: website, software, graphics, digital-marketing
+        const all = dbProjects || [];
+        let matched = [];
+
+        if (currentServiceFilter === 'website') {
+            matched = all.filter(p => {
+                const dept = (p.department?.name || '').toLowerCase();
+                const title = (p.title || '').toLowerCase();
+                const desc = (p.description || '').toLowerCase();
+                return dept.includes('web') || dept.includes('developer') || dept.includes('frontend') ||
+                       title.includes('web') || title.includes('kitchenware') || title.includes('qr') || title.includes('site') ||
+                       desc.includes('website') || desc.includes('web') || desc.includes('store');
+            });
+        } else if (currentServiceFilter === 'software') {
+            matched = all.filter(p => {
+                const dept = (p.department?.name || '').toLowerCase();
+                const title = (p.title || '').toLowerCase();
+                const desc = (p.description || '').toLowerCase();
+                return dept.includes('software') || dept.includes('developer') || dept.includes('backend') ||
+                       title.includes('admin') || title.includes('drive') || title.includes('game') || title.includes('panel') ||
+                       desc.includes('admin') || desc.includes('system') || desc.includes('software');
+            });
+        } else if (currentServiceFilter === 'graphics') {
+            matched = all.filter(p => {
+                const dept = (p.department?.name || '').toLowerCase();
+                const title = (p.title || '').toLowerCase();
+                const desc = (p.description || '').toLowerCase();
+                return dept.includes('graphic') || dept.includes('design') || dept.includes('ui') ||
+                       title.includes('design') || title.includes('graphic') || title.includes('logo') ||
+                       desc.includes('design') || desc.includes('graphic') || desc.includes('brand');
+            });
+        } else if (currentServiceFilter === 'digital-marketing') {
+            matched = all.filter(p => {
+                const dept = (p.department?.name || '').toLowerCase();
+                const title = (p.title || '').toLowerCase();
+                const desc = (p.description || '').toLowerCase();
+                return dept.includes('marketing') || dept.includes('digital') || dept.includes('seo') ||
+                       title.includes('marketing') || title.includes('seo') || title.includes('social') ||
+                       desc.includes('marketing') || desc.includes('campaign') || desc.includes('social');
+            });
+        }
+
+        if (matched.length > 0) {
+            return matched;
+        }
+
+        return FALLBACK_SHOWCASES[currentServiceFilter] || FALLBACK_SHOWCASES.website;
+    }, [dbProjects, currentServiceFilter, subtypeCounts]);
+
+    const total = activeCards.length;
+
+    // Reset center card when switching category
+    const handleFilterClick = (filterId) => {
+        setLocalServiceFilter(filterId);
+        setActiveIndex(0);
+        if (onServiceFilterChange) {
+            onServiceFilterChange(filterId);
         }
     };
 
-    const handleCardClick = (type) => {
+    const goToPrev = useCallback(() => {
         if (isZoomingOut) return;
-        setClickedCard(type);
-        setIsZoomingOut(true);
+        setActiveIndex((prev) => (prev > 0 ? prev - 1 : total - 1));
+    }, [isZoomingOut, total]);
 
-        setTimeout(() => {
-            onSelectBusiness(type);
-        }, 420);
+    const goToNext = useCallback(() => {
+        if (isZoomingOut) return;
+        setActiveIndex((prev) => (prev < total - 1 ? prev + 1 : 0));
+    }, [isZoomingOut, total]);
+
+    // Keyboard navigation (ArrowLeft & ArrowRight)
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'ArrowLeft') {
+                goToPrev();
+            } else if (e.key === 'ArrowRight') {
+                goToNext();
+            } else if (e.key === 'Enter') {
+                const currentCard = activeCards[activeIndex];
+                if (currentCard) handleCardClick(currentCard, activeIndex);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [goToPrev, goToNext, activeIndex, activeCards]);
+
+    // Non-passive wheel event listener: explicitly block browser history swipe-back gestures!
+    useEffect(() => {
+        const stage = carouselRef.current;
+        if (!stage) return;
+
+        const handleWheelEvent = (e) => {
+            const absX = Math.abs(e.deltaX);
+            const absY = Math.abs(e.deltaY);
+
+            // Any horizontal gesture over the carousel MUST be prevented from reaching browser history
+            if (absX > 4 || absX > absY) {
+                if (e.cancelable) {
+                    e.preventDefault();
+                }
+            }
+
+            const now = Date.now();
+            if (now - lastWheelTime.current < 220) return; // Smooth throttle
+
+            if (absX > 15) {
+                if (e.cancelable) e.preventDefault();
+                if (e.deltaX > 0) goToNext();
+                else goToPrev();
+                lastWheelTime.current = now;
+            } else if (absY > 25) {
+                if (e.cancelable) e.preventDefault();
+                if (e.deltaY > 0) goToNext();
+                else goToPrev();
+                lastWheelTime.current = now;
+            }
+        };
+
+        stage.addEventListener('wheel', handleWheelEvent, { passive: false });
+        return () => {
+            stage.removeEventListener('wheel', handleWheelEvent);
+        };
+    }, [goToNext, goToPrev]);
+
+    // Swipe / Drag handler
+    const handleDragEnd = (_, info) => {
+        const threshold = 40;
+        if (info.offset.x < -threshold) {
+            goToNext();
+        } else if (info.offset.x > threshold) {
+            goToPrev();
+        }
     };
+
+    const handleCardClick = (card, index) => {
+        if (isZoomingOut) return;
+
+        // If clicking a side card, bring it to center first
+        if (index !== undefined && index !== activeIndex) {
+            setActiveIndex(index);
+            return;
+        }
+
+        // If clicking a business sector card from "All Businesses", navigate to its sub-businesses!
+        if (card.isBusinessSector || currentServiceFilter === 'all-businesses') {
+            setClickedCard(card.type || card.title);
+            setIsZoomingOut(true);
+
+            setTimeout(() => {
+                if (onSelectBusiness) {
+                    onSelectBusiness(card.type || card.title);
+                }
+            }, 380);
+            return;
+        }
+
+        // Clicking the active center project card opens the Project Details Modal
+        setClickedCard(card._id || card.title);
+        setDetailsProject(card);
+    };
+
+    const currentFilterObj = SERVICE_FILTERS.find(f => f.id === currentServiceFilter);
 
     return (
         <motion.div
@@ -126,30 +432,27 @@ const HorizontalBusinessMotionView = ({
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             className="w-full relative pt-0 pb-4 select-none overflow-hidden"
         >
-            {/* Background Atmosphere: Soft Ambient Glowing Orbs & Trajectory Line (Matches Reference Image) */}
+            {/* Background Atmosphere: Soft Ambient Glowing Orbs */}
             <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-gradient-to-br from-blue-300/20 via-sky-200/10 to-transparent blur-3xl pointer-events-none" />
             <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-gradient-to-tr from-sky-300/15 via-blue-200/5 to-transparent blur-3xl pointer-events-none" />
 
-            {/* Header: Title Banner & Glide Controls */}
-            <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-7 px-2">
+            {/* Header: Title Banner & Filter Controls */}
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-5 px-2">
                 <div className="flex flex-col items-start space-y-2.5 max-w-3xl relative">
-                    {/* 1. Top Kicker: EXPLORE • CONNECT • GROW (First / On Top) */}
+                    {/* 1. Top Kicker: EXPLORE • CONNECT • GROW */}
                     <div className="w-fit">
                         <div className="inline-flex items-center space-x-2.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-white/95 via-[#F3F8FF]/85 to-white/95 dark:from-[#08122f]/95 dark:via-[#0c1c48]/85 dark:to-[#08122f]/95 backdrop-blur-xl border border-[#CBDCF8] dark:border-[#1E3A8A]/70 shadow-xs relative overflow-hidden group select-none">
-                            {/* Micro Shimmer Light Sweep Effect */}
                             <motion.div
                                 animate={{ x: ['-120%', '220%'] }}
                                 transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut', repeatDelay: 1.2 }}
                                 className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-blue-400/20 to-transparent skew-x-12 pointer-events-none"
                             />
 
-                            {/* Live Deep Navy Radar Signal Beacon */}
                             <div className="relative flex items-center justify-center w-2.5 h-2.5 shrink-0">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#1E3A8A] opacity-60" />
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[#0f1d40] dark:bg-sky-400 ring-2 ring-blue-400/30 shadow-[0_0_6px_rgba(30,58,138,0.4)]" />
                             </div>
 
-                            {/* Tri-Tone Deep Navy Journey: EXPLORE • CONNECT • GROW */}
                             <div 
                                 className="flex items-center space-x-2 text-[10.5px] sm:text-[11.5px] font-extrabold tracking-[0.22em] uppercase"
                                 style={{ fontFamily: "'Outfit', sans-serif" }}
@@ -163,18 +466,16 @@ const HorizontalBusinessMotionView = ({
                         </div>
                     </div>
 
-                    {/* 2. Main Headline (Directly Below Kicker) */}
+                    {/* 2. Main Headline */}
                     <div className="relative w-fit">
                         <h2 className="text-4xl sm:text-5xl lg:text-[54px] leading-[1.1] tracking-tight flex flex-wrap items-baseline gap-x-3.5">
-                            {/* "Select" in Light Geometric Sans (Deep Navy) */}
                             <span 
                                 className="font-light text-[#0f1d40] dark:text-white tracking-[-0.02em]"
                                 style={{ fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif" }}
                             >
-                                Select
+                                {currentServiceFilter === 'all-businesses' ? 'Select' : 'Featured'}
                             </span>
 
-                            {/* "Business Type" in Italic Luxury Serif with Deep Navy Palette */}
                             <span className="relative inline-block">
                                 <span 
                                     className="font-bold italic bg-gradient-to-r from-[#09152e] via-[#0f2752] to-[#1e3a8a] dark:from-white dark:via-slate-100 dark:to-sky-300 bg-clip-text text-transparent pr-1 tracking-tight"
@@ -182,10 +483,9 @@ const HorizontalBusinessMotionView = ({
                                         fontFamily: "'Playfair Display', Georgia, serif"
                                     }}
                                 >
-                                    Business Type
+                                    {currentServiceFilter === 'all-businesses' ? 'Business Type' : (currentFilterObj?.label || 'Projects')}
                                 </span>
 
-                                {/* Animated Curved Underline Swoosh in Deep Navy */}
                                 <svg 
                                     className="absolute -bottom-2.5 left-0 w-full h-3.5 overflow-visible pointer-events-none"
                                     viewBox="0 0 280 14" 
@@ -196,15 +496,15 @@ const HorizontalBusinessMotionView = ({
                                         animate={{ pathLength: 1, opacity: 1 }}
                                         transition={{ duration: 1.2, delay: 0.25, ease: "easeOut" }}
                                         d="M 2 9 C 80 3, 200 2, 278 11" 
-                                        stroke="url(#swoosh-grad)" 
+                                        stroke="url(#swoosh-grad-dyn)" 
                                         strokeWidth="2.8" 
                                         strokeLinecap="round" 
                                     />
                                     <defs>
-                                        <linearGradient id="swoosh-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                            <stop offset="0%" stopColor="#0f1d40" stopOpacity="0.9" />
-                                            <stop offset="65%" stopColor="#1e3a8a" stopOpacity="0.85" />
-                                            <stop offset="100%" stopColor="#2563eb" stopOpacity="0.15" />
+                                        <linearGradient id="swoosh-grad-dyn" x1="0%" y1="0%" x2="100%" y2="0%">
+                                             <stop offset="0%" stopColor="#0f1d40" stopOpacity="0.9" />
+                                             <stop offset="65%" stopColor="#1e3a8a" stopOpacity="0.85" />
+                                             <stop offset="100%" stopColor="#2563eb" stopOpacity="0.15" />
                                         </linearGradient>
                                     </defs>
                                 </svg>
@@ -217,128 +517,292 @@ const HorizontalBusinessMotionView = ({
                         className="text-sm sm:text-[15px] text-[#486581] dark:text-slate-400 font-normal pt-1"
                         style={{ fontFamily: "'Outfit', sans-serif" }}
                     >
-                        Click on any business to view its sub-business options.
+                        {currentServiceFilter === 'all-businesses'
+                            ? 'Swipe or click any card to center, then click to view its sub-business options.'
+                            : 'Swipe or click any card to center, then click to view project details & live demo.'}
                     </p>
                 </div>
 
-                {/* Right Action Controls: Client Support + Glide Buttons */}
-                <div className="flex items-center space-x-2.5 self-start lg:self-end shrink-0 z-20">
-                    {onOpenSupport && (
+                {/* Right Action Controls: Service Filters (Green Box area) on top + Client Support & Prev/Next Controls */}
+                <div className="flex flex-col items-start lg:items-end space-y-3.5 self-start lg:self-end shrink-0 z-20">
+                    {/* Service Category Filter Pills: Website, Software, Graphics, Digital Marketing */}
+                    <div className="inline-flex flex-wrap items-center p-1 rounded-2xl bg-white/95 dark:bg-[#070e28]/95 backdrop-blur-xl border border-[#CBDCF8] dark:border-[#1E3A8A]/60 shadow-xs gap-1 select-none">
+                        {SERVICE_FILTERS.map((item) => {
+                            const IconComponent = item.icon;
+                            const isSelected = currentServiceFilter === item.id;
+                            return (
+                                <button
+                                    key={item.id}
+                                    type="button"
+                                    onClick={() => handleFilterClick(item.id)}
+                                    className={`relative flex items-center space-x-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                                        isSelected
+                                            ? 'text-white shadow-xs'
+                                            : 'text-slate-600 dark:text-slate-300 hover:text-[#1E3A8A] dark:hover:text-white hover:bg-[#EDF6FF] dark:hover:bg-[#101f56]/60'
+                                    }`}
+                                >
+                                    {isSelected && (
+                                        <motion.div
+                                            layoutId="activeServiceFilterPill"
+                                            className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] shadow-sm shadow-blue-500/25 -z-10"
+                                            transition={{ type: "spring", stiffness: 450, damping: 35 }}
+                                        />
+                                    )}
+                                    <IconComponent className={`w-3.5 h-3.5 ${isSelected ? 'text-white' : 'text-[#2563EB] dark:text-sky-400'}`} />
+                                    <span>{item.label}</span>
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    {/* Bottom Row: Client Support + Prev/Next Controls */}
+                    <div className="flex items-center space-x-2.5">
+                        {onOpenSupport && (
+                            <button
+                                type="button"
+                                onClick={onOpenSupport}
+                                className="inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-2xl bg-white dark:bg-[#070e28] text-slate-700 dark:text-white border border-[#D9E8FA] dark:border-[#14235a] shadow-xs hover:bg-[#EDF6FF] dark:hover:bg-[#101f56] hover:border-[#2463EB]/50 text-xs font-bold transition-all cursor-pointer group"
+                            >
+                                <HelpCircle className="w-4 h-4 text-[#2463EB] dark:text-sky-400 group-hover:scale-110 transition-transform" />
+                                <span>Client Support</span>
+                            </button>
+                        )}
                         <button
                             type="button"
-                            onClick={onOpenSupport}
-                            className="inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-2xl bg-white dark:bg-[#070e28] text-slate-700 dark:text-white border border-[#D9E8FA] dark:border-[#14235a] shadow-xs hover:bg-[#EDF6FF] dark:hover:bg-[#101f56] hover:border-[#2463EB]/50 text-xs font-bold transition-all cursor-pointer group"
+                            onClick={goToPrev}
+                            className="w-10 h-10 rounded-2xl bg-white dark:bg-[#070e28] text-slate-700 dark:text-white border border-[#D9E8FA] dark:border-[#14235a] shadow-sm hover:bg-[#EDF6FF] dark:hover:bg-[#101f56] hover:border-[#2463EB]/50 flex items-center justify-center transition-all cursor-pointer group active:scale-95"
+                            title="Previous Project"
                         >
-                            <HelpCircle className="w-4 h-4 text-[#2463EB] dark:text-sky-400 group-hover:scale-110 transition-transform" />
-                            <span>Client Support</span>
+                            <ChevronLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
                         </button>
-                    )}
-                    <button
-                        type="button"
-                        onClick={() => handleScroll('left')}
-                        className="w-10 h-10 rounded-2xl bg-white dark:bg-[#070e28] text-slate-700 dark:text-white border border-[#D9E8FA] dark:border-[#14235a] shadow-sm hover:bg-[#EDF6FF] dark:hover:bg-[#101f56] hover:border-[#2463EB]/50 flex items-center justify-center transition-all cursor-pointer group active:scale-95"
-                        title="Scroll Left"
-                    >
-                        <ChevronLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => handleScroll('right')}
-                        className="w-10 h-10 rounded-2xl bg-white dark:bg-[#070e28] text-slate-700 dark:text-white border border-[#D9E8FA] dark:border-[#14235a] shadow-sm hover:bg-[#EDF6FF] dark:hover:bg-[#101f56] hover:border-[#2463EB]/50 flex items-center justify-center transition-all cursor-pointer group active:scale-95"
-                        title="Scroll Right"
-                    >
-                        <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
-                    </button>
+                        <button
+                            type="button"
+                            onClick={goToNext}
+                            className="w-10 h-10 rounded-2xl bg-white dark:bg-[#070e28] text-slate-700 dark:text-white border border-[#D9E8FA] dark:border-[#14235a] shadow-sm hover:bg-[#EDF6FF] dark:hover:bg-[#101f56] hover:border-[#2463EB]/50 flex items-center justify-center transition-all cursor-pointer group active:scale-95"
+                            title="Next Project"
+                        >
+                            <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            {/* Realistic Picture Cards Horizontal Track Container with Faded Edges */}
-            <div className="relative w-full">
-                {/* Left Edge Subtle Vignette Fade */}
-                <div 
-                    className="pointer-events-none absolute left-0 top-0 bottom-6 w-8 sm:w-14 bg-gradient-to-r from-[#e6f1fc]/70 dark:from-[#060b19]/70 to-transparent z-20" 
-                    aria-hidden="true"
-                />
-
-                {/* Right Edge Subtle Vignette Fade */}
-                <div 
-                    className="pointer-events-none absolute right-0 top-0 bottom-6 w-8 sm:w-14 bg-gradient-to-l from-[#f6faff]/70 dark:from-[#060a17]/70 to-transparent z-20" 
-                    aria-hidden="true"
-                />
-
-                {/* Horizontal Motion Track with Subtle CSS Feather Mask */}
-                <div
-                    ref={scrollContainerRef}
-                    onWheel={handleWheel}
-                    className="flex items-center space-x-6 overflow-x-auto pb-6 pt-2 px-4 sm:px-6 scroll-smooth no-scrollbar"
-                    style={{ 
-                        WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%)',
-                        maskImage: 'linear-gradient(to right, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%)',
-                        scrollbarWidth: 'none', 
-                        msOverflowStyle: 'none' 
-                    }}
+            {/* 3D Coverflow Carousel Stage */}
+            <div 
+                ref={carouselRef}
+                className="relative w-full h-[430px] sm:h-[470px] flex items-center justify-center overflow-hidden py-4 cursor-grab active:cursor-grabbing select-none"
+                style={{ 
+                    perspective: '1100px',
+                    overscrollBehaviorX: 'none',
+                    touchAction: 'pan-y'
+                }}
+            >
+                {/* Drag interaction wrapper */}
+                <motion.div
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={0.2}
+                    onDragEnd={handleDragEnd}
+                    className="relative w-full h-full flex items-center justify-center"
+                    style={{ transformStyle: 'preserve-3d' }}
                 >
-                    {BUSINESS_SECTORS.map((sector, index) => {
-                        const isSelected = sector.type === clickedCard;
-                        const subtypeCount = subtypeCounts[sector.type] || sector.units;
+                    {activeCards.map((project, index) => {
+                        const offset = index - activeIndex;
+                        const isCenter = offset === 0;
+                        const isSelected = (project._id || project.title) === clickedCard;
+
+                        // Only render cards within reasonable distance to keep performance smooth
+                        if (Math.abs(offset) > 4) return null;
+
+                        // Calculate Coverflow 3D Transform values
+                        let translateX = 0;
+                        let rotateY = 0;
+                        let scale = 1;
+                        let zIndex = 30;
+                        let opacity = 1;
+
+                        if (offset === 0) {
+                            translateX = 0;
+                            rotateY = 0;
+                            scale = 1.05;
+                            zIndex = 30;
+                            opacity = 1;
+                        } else if (offset < 0) {
+                            // Left side cards
+                            const distance = Math.abs(offset);
+                            translateX = -170 - (distance - 1) * 125;
+                            rotateY = Math.min(48, 38 + distance * 4);
+                            scale = Math.max(0.68, 0.88 - distance * 0.08);
+                            zIndex = 30 - distance;
+                            opacity = Math.max(0.35, 1 - distance * 0.22);
+                        } else {
+                            // Right side cards
+                            const distance = Math.abs(offset);
+                            translateX = 170 + (distance - 1) * 125;
+                            rotateY = -Math.min(48, 38 + distance * 4);
+                            scale = Math.max(0.68, 0.88 - distance * 0.08);
+                            zIndex = 30 - distance;
+                            opacity = Math.max(0.35, 1 - distance * 0.22);
+                        }
+
+                        const isBusiness = Boolean(project.isBusinessSector || currentServiceFilter === 'all-businesses');
+
+                        // Get image URL: thumbnail or fallback category photography
+                        const defaultImg = CATEGORY_DEFAULT_IMAGES[currentServiceFilter] || CATEGORY_DEFAULT_IMAGES.website;
+                        const imageUrl = isBusiness
+                            ? (project.image || defaultImg)
+                            : (project.thumbnail
+                                ? (project.thumbnail.startsWith('http') ? project.thumbnail : `${BASE_URL}/uploads/${encodeURIComponent(project.thumbnail)}`)
+                                : defaultImg);
+
+                        const deptLabel = isBusiness
+                            ? 'Commercial Sector'
+                            : (project.department?.name || project.category || 'Error Infotech');
 
                         return (
                             <motion.div
-                                key={sector.type}
-                                initial={{ opacity: 0, y: 25 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.35, delay: index * 0.04 }}
-                                whileHover={!isZoomingOut ? { 
-                                    y: -12, 
-                                    scale: 1.04,
-                                    transition: { type: "spring", stiffness: 380, damping: 24 }
+                                key={project._id || project.title || project.type}
+                                initial={false}
+                                animate={{
+                                    x: translateX,
+                                    rotateY: rotateY,
+                                    scale: scale,
+                                    opacity: opacity,
+                                    zIndex: zIndex,
+                                }}
+                                transition={{
+                                    type: "spring",
+                                    stiffness: 280,
+                                    damping: 28,
+                                    mass: 0.75
+                                }}
+                                whileHover={isCenter && !isZoomingOut ? { 
+                                    scale: 1.08,
+                                    y: -6,
+                                    transition: { duration: 0.25 }
                                 } : {}}
-                                whileTap={!isZoomingOut ? { scale: 0.97 } : {}}
-                                onClick={() => handleCardClick(sector.type)}
-                                className={`min-w-[280px] sm:min-w-[310px] max-w-[320px] h-[390px] sm:h-[420px] rounded-3xl cursor-pointer relative group overflow-hidden shrink-0 select-none shadow-xl border transition-all duration-500 ${
-                                    isSelected
-                                        ? 'ring-4 ring-[#2563EB] shadow-[0_0_35px_rgba(37,99,235,0.55)] scale-105 border-blue-400 z-10'
-                                        : 'border-white/20 hover:border-sky-300 dark:hover:border-sky-400 hover:shadow-[0_24px_50px_-10px_rgba(15,29,64,0.35)] dark:hover:shadow-[0_24px_50px_-10px_rgba(37,99,235,0.30)]'
+                                onClick={() => handleCardClick(project, index)}
+                                className={`absolute w-[265px] sm:w-[305px] h-[375px] sm:h-[415px] rounded-3xl cursor-pointer overflow-hidden select-none border transition-shadow duration-300 ${
+                                    isCenter
+                                        ? isSelected
+                                            ? 'ring-4 ring-[#2563EB] shadow-[0_0_40px_rgba(37,99,235,0.6)] border-blue-400'
+                                            : 'ring-2 ring-blue-500/80 shadow-[0_24px_55px_-10px_rgba(15,29,64,0.45)] dark:shadow-[0_24px_55px_-10px_rgba(37,99,235,0.38)] border-white/40'
+                                        : 'shadow-lg border-white/10 hover:border-white/30'
                                 }`}
+                                style={{
+                                    transformStyle: 'preserve-3d',
+                                    WebkitBoxReflect: isCenter 
+                                        ? 'below 6px linear-gradient(to bottom, transparent 75%, rgba(0, 0, 0, 0.25))' 
+                                        : 'none'
+                                }}
                             >
-                                {/* Realistic Photographic Background Image with Smooth Depth Zoom */}
+                                {/* Photographic Background Image */}
                                 <img 
-                                    src={sector.image} 
-                                    alt={sector.type}
+                                    src={imageUrl} 
+                                    alt={project.title || project.type}
                                     loading="lazy"
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-112"
+                                    onError={(e) => {
+                                        if (e.target.src !== defaultImg) {
+                                            e.target.src = defaultImg;
+                                        }
+                                    }}
+                                    className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out ${
+                                        isCenter ? 'group-hover:scale-108' : 'scale-100'
+                                    }`}
                                 />
 
-                                {/* Cinematic Realistic Dark Gradient Overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 via-35% to-black/10 transition-opacity duration-300 group-hover:via-black/55" />
+                                {/* Dark Gradient Overlay */}
+                                <div className={`absolute inset-0 transition-colors duration-300 ${
+                                    isCenter 
+                                        ? 'bg-gradient-to-t from-black/95 via-black/40 to-black/15' 
+                                        : 'bg-black/60 hover:bg-black/45'
+                                }`} />
 
-                                {/* Subtle indicator if selected */}
-                                {isSelected && (
-                                    <div className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg animate-pulse">
-                                        <Check className="w-4 h-4 stroke-[3]" />
-                                    </div>
-                                )}
+                                {/* Top Floating Badges */}
+                                <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between z-20 pointer-events-none">
+                                    <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-black/50 text-white backdrop-blur-md border border-white/20">
+                                        {deptLabel}
+                                    </span>
 
-                                {/* Card Bottom-Left Corner: Business Name and Sub-Businesses */}
-                                <div className="absolute bottom-0 left-0 right-0 p-6 z-10 flex flex-col items-start justify-end text-left pointer-events-none">
+                                    {isBusiness ? (
+                                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/20 text-white backdrop-blur-md border border-white/20">
+                                            {project.units} Sub-Units
+                                        </span>
+                                    ) : project.liveUrl ? (
+                                        <a
+                                            href={project.liveUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="pointer-events-auto flex items-center space-x-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-600/90 hover:bg-blue-600 text-white backdrop-blur-md shadow-xs transition-colors"
+                                            title="Open Live Preview"
+                                        >
+                                            <span>Live</span>
+                                            <ExternalLink className="w-2.5 h-2.5" />
+                                        </a>
+                                    ) : null}
+                                </div>
+
+                                {/* Card Bottom Details */}
+                                <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 z-10 flex flex-col items-start justify-end text-left pointer-events-none">
                                     <h3 
-                                        className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight drop-shadow-lg group-hover:text-sky-300 transition-colors"
+                                        className={`font-black text-white tracking-tight leading-tight drop-shadow-lg transition-colors line-clamp-1 ${
+                                            isCenter ? 'text-2xl sm:text-3xl text-white' : 'text-xl sm:text-2xl text-white/85'
+                                        }`}
                                         style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}
                                     >
-                                        {sector.type}
+                                        {project.title || project.type}
                                     </h3>
-                                    <p 
-                                        className="text-sm font-semibold text-white/85 mt-1.5 drop-shadow-md tracking-wide"
-                                        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                                    >
-                                        {subtypeCount} Sub-Businesses
+                                    <p className="text-xs text-white/80 drop-shadow-md line-clamp-2 mt-1 leading-relaxed">
+                                        {isBusiness
+                                            ? `${project.units} Sub-Businesses available for deliverables & live deployment.`
+                                            : (project.description || 'Enterprise project repository and client showcase deployment.')}
                                     </p>
+                                    
+                                    {isCenter && (
+                                        <div className="flex items-center space-x-2 mt-3 pt-2 border-t border-white/20 w-full justify-between">
+                                            <span className="text-[11px] font-bold text-sky-300">
+                                                {isBusiness
+                                                    ? `${project.units} Sub-Categories`
+                                                    : (project.files?.length ? `${project.files.length} Files` : 'Project Showcase')}
+                                            </span>
+                                            <span className="inline-flex items-center space-x-1 text-[11px] font-extrabold text-white bg-white/20 px-2.5 py-0.5 rounded-full backdrop-blur-md">
+                                                <span>{isBusiness ? 'Explore' : 'Details'}</span>
+                                                <ArrowRight className="w-3 h-3" />
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                             </motion.div>
                         );
                     })}
-                </div>
+                </motion.div>
+
+                {/* Floating Quick Navigation Arrows on Left and Right of Carousel */}
+                <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); goToPrev(); }}
+                    className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-40 w-11 h-11 rounded-full bg-white/85 dark:bg-[#070e28]/85 backdrop-blur-md text-slate-800 dark:text-white border border-white/60 dark:border-white/10 shadow-xl hover:scale-110 active:scale-95 flex items-center justify-center transition-all cursor-pointer hover:bg-white dark:hover:bg-[#101f56]"
+                    title="Previous"
+                >
+                    <ChevronLeft className="w-6 h-6 -translate-x-0.5" />
+                </button>
+                <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); goToNext(); }}
+                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-40 w-11 h-11 rounded-full bg-white/85 dark:bg-[#070e28]/85 backdrop-blur-md text-slate-800 dark:text-white border border-white/60 dark:border-white/10 shadow-xl hover:scale-110 active:scale-95 flex items-center justify-center transition-all cursor-pointer hover:bg-white dark:hover:bg-[#101f56]"
+                    title="Next"
+                >
+                    <ChevronRight className="w-6 h-6 translate-x-0.5" />
+                </button>
             </div>
+
+            {/* View-Only Project Details Modal */}
+            <ProjectDetailsModal
+                project={detailsProject}
+                isOpen={Boolean(detailsProject)}
+                onClose={() => setDetailsProject(null)}
+            />
         </motion.div>
     );
 };

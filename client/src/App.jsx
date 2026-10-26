@@ -1,19 +1,42 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
-import AdminDashboard from './pages/AdminDashboard';
 import Departments from './pages/Departments';
 import Employees from './pages/Employees';
 import AdminProjects from './pages/AdminProjects';
 import SearchResults from './pages/SearchResults';
 import MyProjects from './pages/MyProjects';
-import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import Profile from './pages/Profile';
 import UploadRedirect from './pages/UploadRedirect';
 import Office from './pages/Office';
 import Client from './pages/Client';
 import ClientPortalRoot from './client-portal/ClientPortalRoot';
+
+// Global Route Tracker to ensure Back buttons always have valid destinations
+const RouteTracker = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    const current = location.pathname + location.search;
+    const prev = sessionStorage.getItem('current_route');
+
+    if (prev && prev !== current && !prev.includes('/login')) {
+      sessionStorage.setItem('prev_route', prev);
+    }
+    sessionStorage.setItem('current_route', current);
+
+    // Track active portals
+    if (location.pathname === '/client-portal') {
+      sessionStorage.setItem('last_active_portal', '/client-portal');
+    } else if (location.pathname === '/office' || location.pathname === '/admin/office') {
+      sessionStorage.setItem('last_active_portal', location.pathname);
+    }
+  }, [location]);
+
+  return null;
+};
 
 // Protected Route Component
 const ProtectedRoute = ({ children, adminOnly = false }) => {
@@ -25,29 +48,42 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 
   if (adminOnly && user.role !== 'admin') return <Navigate to="/dashboard" />;
 
+  // If an 'admin' tries to access employee personal workspace (/dashboard or /upload), redirect to office dashboard
+  if (user.role === 'admin' && (window.location.pathname === '/dashboard' || window.location.pathname === '/upload')) {
+      return <Navigate to="/admin/office" replace />;
+  }
+
   // Restrict employee/admin routes from 'client' role if needed, or route them properly
   // If a 'client' tries to access /dashboard, send them to /client-portal
   if (user.role === 'client' && window.location.pathname !== '/client-portal' && window.location.pathname !== '/profile') {
-      return <Navigate to="/client-portal" />;
+      return <Navigate to="/client-portal" replace />;
   }
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-tr from-[#e6f1fc] via-[#edf5fd] to-[#f6faff] dark:from-[#060b19] dark:via-[#091126] dark:to-[#060a17] dark:bg-[#060b19] text-slate-900 dark:text-slate-100 transition-colors duration-300">
-      <Sidebar />
-      <div className="flex-1 flex flex-col pl-64">
-        <Navbar />
-        <main className="flex-1 p-8">
-          {children}
-        </main>
-      </div>
+    <div className="min-h-screen bg-gradient-to-tr from-[#e6f1fc] via-[#edf5fd] to-[#f6faff] dark:from-[#060b19] dark:via-[#091126] dark:to-[#060a17] dark:bg-[#060b19] text-slate-900 dark:text-slate-100 transition-colors duration-300 flex flex-col">
+      <Navbar />
+      <main className="flex-1 p-6 sm:p-8 max-w-7xl mx-auto w-full">
+        {children}
+      </main>
     </div>
   );
+};
+
+// Role-aware Home Redirector
+const HomeRedirect = () => {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
+  if (user.role === 'admin') return <Navigate to="/admin/office" replace />;
+  if (user.role === 'client') return <Navigate to="/client-portal" replace />;
+  return <Navigate to="/dashboard" replace />;
 };
 
 function App() {
   return (
     <AuthProvider>
       <Router>
+        <RouteTracker />
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans">
           <Routes>
             <Route path="/login" element={<Login />} />
@@ -85,7 +121,7 @@ function App() {
             {/* Admin Routes */}
             <Route path="/admin" element={
               <ProtectedRoute adminOnly>
-                <AdminDashboard />
+                <Office />
               </ProtectedRoute>
             } />
             <Route path="/admin/office" element={
@@ -125,7 +161,7 @@ function App() {
               </ProtectedRoute>
             } />
 
-            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/" element={<HomeRedirect />} />
           </Routes>
         </div>
       </Router>

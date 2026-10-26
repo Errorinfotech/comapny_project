@@ -11,6 +11,9 @@ const {
 const { protect, adminOnly } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
+// Public/portal projects for client portfolio exploration
+router.get('/portal', getAllProjects);
+
 router.use(protect);
 
 router.get('/', adminOnly, getAllProjects);

@@ -34,7 +34,10 @@ const ClientPortalRoot = () => {
     }
 
     return (
-        <div className="min-h-screen relative overflow-hidden bg-[#f8fbff] dark:bg-[#060b19] text-slate-900 dark:text-slate-100 transition-colors duration-300">
+        <div 
+            className="min-h-screen relative overflow-hidden bg-[#f8fbff] dark:bg-[#060b19] text-slate-900 dark:text-slate-100 transition-colors duration-300"
+            style={{ overscrollBehaviorX: 'none' }}
+        >
             {/* 🌐 Animated Digital Network Node Backdrop */}
             <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
                 {/* 1. Fluid Ambient Aurora Mesh Orbs (Living color dynamic glow under the network) */}

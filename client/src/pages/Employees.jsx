@@ -3,7 +3,7 @@ import api from '../api';
 import { UserPlus, Trash2, Key, Search, Users, User, Shield, Lock, Briefcase } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Button, Card, Input, Modal, Badge } from '@/components/ui';
+import { Button, Card, Input, Modal, Badge, ConfirmDeleteModal } from '@/components/ui';
 
 const Employees = () => {
     const navigate = useNavigate();
@@ -15,6 +15,7 @@ const Employees = () => {
     const [showModal, setShowModal] = useState(false);
     const [showResetModal, setShowResetModal] = useState(false);
     const [selectedEmp, setSelectedEmp] = useState(null);
+    const [empToDelete, setEmpToDelete] = useState(null);
     const [newEmp, setNewEmp] = useState({ username: '', password: '', departmentId: '' });
     const [newPassword, setNewPassword] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
@@ -54,14 +55,14 @@ const Employees = () => {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to remove this employee?')) {
-            try {
-                await api.delete(`/admin/employees/${id}`);
-                fetchData();
-            } catch (err) {
-                alert(err.response?.data?.message || 'Error deleting employee');
-            }
+    const executeDeleteEmp = async () => {
+        if (!empToDelete) return;
+        try {
+            await api.delete(`/admin/employees/${empToDelete._id}`);
+            setEmpToDelete(null);
+            fetchData();
+        } catch (err) {
+            alert(err.response?.data?.message || 'Error deleting employee');
         }
     };
 
@@ -156,7 +157,7 @@ const Employees = () => {
                             {filteredEmployees.map((emp) => (
                                 <tr
                                     key={emp._id}
-                                    onClick={() => navigate(`/admin/projects?employeeId=${emp._id}`)}
+                                    onClick={() => navigate(`/admin/projects?employeeId=${emp._id}&employeeName=${encodeURIComponent(emp.username)}`)}
                                     className="hover:bg-blue-600/5 dark:hover:bg-blue-600/5 transition-colors group cursor-pointer"
                                 >
                                     <td className="px-6 py-4">
@@ -197,8 +198,8 @@ const Employees = () => {
                                                 <Key className="h-4 w-4" />
                                             </button>
                                             <button
-                                                onClick={(e) => { e.stopPropagation(); handleDelete(emp._id); }}
-                                                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
+                                                onClick={(e) => { e.stopPropagation(); setEmpToDelete(emp); }}
+                                                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
                                                 title="Delete Employee"
                                             >
                                                 <Trash2 className="h-4 w-4" />
@@ -318,6 +319,17 @@ const Employees = () => {
                     </div>
                 </form>
             </Modal>
+
+            {/* Common Confirm Delete Modal */}
+            <ConfirmDeleteModal
+                isOpen={Boolean(empToDelete)}
+                onClose={() => setEmpToDelete(null)}
+                onConfirm={executeDeleteEmp}
+                title="Remove Employee?"
+                itemName={empToDelete ? `@${empToDelete.username}` : ''}
+                message="Are you sure you want to remove this employee account? They will immediately lose access to the portal."
+                confirmText="Remove Employee"
+            />
         </div>
     );
 };
