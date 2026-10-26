@@ -37,11 +37,13 @@ const ProjectEngine = ({
     const [uploading, setUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
 
-    // Admin assignable employee and department
+    // Admin assignable employee, department, and client portal publishing
     const [employees, setEmployees] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [selectedEmployeeId, setSelectedEmployeeId] = useState('');
     const [selectedDepartmentId, setSelectedDepartmentId] = useState('');
+    const [showOnClientPortal, setShowOnClientPortal] = useState(false);
+    const [clientCategory, setClientCategory] = useState('');
 
     // Fetch employees and departments for admin assignment
     useEffect(() => {
@@ -74,6 +76,8 @@ const ProjectEngine = ({
             setUploadMode('files');
             setSelectedEmployeeId(project.employee?._id || project.employee || '');
             setSelectedDepartmentId(project.department?._id || project.department || '');
+            setShowOnClientPortal(Boolean(project.showOnClientPortal));
+            setClientCategory(project.clientCategory || '');
         } else {
             setTitle('');
             setDescription('');
@@ -85,6 +89,8 @@ const ProjectEngine = ({
             setUploadMode(initialMode === 'folder' ? 'folder' : 'files');
             setSelectedEmployeeId(initialEmployeeId || '');
             setSelectedDepartmentId(departmentId || '');
+            setShowOnClientPortal(false);
+            setClientCategory('');
         }
     }, [project, isOpen, initialMode, initialEmployeeId, departmentId]);
 
@@ -133,6 +139,11 @@ const ProjectEngine = ({
                     }
                 }
                 
+                if (isAdmin) {
+                    formData.append('showOnClientPortal', showOnClientPortal);
+                    formData.append('clientCategory', clientCategory);
+                }
+
                 if (thumbnailFile) {
                     formData.append('thumbnail', thumbnailFile);
                 }
@@ -154,6 +165,11 @@ const ProjectEngine = ({
 
                 if (isAdmin && selectedEmployeeId) {
                     formData.append('employeeId', selectedEmployeeId);
+                }
+
+                if (isAdmin) {
+                    formData.append('showOnClientPortal', showOnClientPortal);
+                    formData.append('clientCategory', clientCategory);
                 }
 
                 const finalDept = selectedDepartmentId || departmentId;
@@ -295,6 +311,44 @@ const ProjectEngine = ({
                                             </option>
                                         ))}
                                     </select>
+                                </div>
+                            </div>
+
+                            {/* 🚀 Client Portal Showcase Control */}
+                            <div className="pt-3 border-t border-sky-100 dark:border-[#192b6a]">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <label className="flex items-center space-x-2.5 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={showOnClientPortal}
+                                            onChange={(e) => setShowOnClientPortal(e.target.checked)}
+                                            className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                        />
+                                        <div>
+                                            <span className="text-xs font-bold text-slate-800 dark:text-slate-100 block">
+                                                Publish to Client Portal Showcase
+                                            </span>
+                                            <span className="text-[10px] text-slate-500 dark:text-slate-400 block">
+                                                Displays this project live in the Client Portal portfolio
+                                            </span>
+                                        </div>
+                                    </label>
+
+                                    {showOnClientPortal && (
+                                        <div className="w-full sm:w-56 shrink-0">
+                                            <select
+                                                value={clientCategory}
+                                                onChange={(e) => setClientCategory(e.target.value)}
+                                                className="w-full bg-white dark:bg-[#070e28] border border-blue-400 dark:border-blue-600 rounded-xl py-2 px-3 text-xs font-bold text-blue-900 dark:text-sky-200 outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
+                                            >
+                                                <option value="">Auto-detect Category</option>
+                                                <option value="website">Website</option>
+                                                <option value="software">Software</option>
+                                                <option value="graphics">Graphics</option>
+                                                <option value="digital-marketing">Digital Marketing</option>
+                                            </select>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>

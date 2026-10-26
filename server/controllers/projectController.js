@@ -8,7 +8,7 @@ const fs = require('fs');
 // @access  Private
 const createProject = async (req, res) => {
     try {
-        const { title, description, liveUrl, githubUrl, folders, scope } = req.body;
+        const { title, description, liveUrl, githubUrl, folders, scope, showOnClientPortal, clientCategory } = req.body;
 
         const uploadedFiles = req.files?.files || [];
         const uploadedThumbnail = req.files?.thumbnail || [];
@@ -80,6 +80,11 @@ const createProject = async (req, res) => {
             }
         }
 
+        const isClientPortal = req.user.role === 'admin'
+            ? (showOnClientPortal === 'true' || showOnClientPortal === true)
+            : false;
+        const normalizedCategory = req.user.role === 'admin' ? (clientCategory || '') : '';
+
         const project = await Project.create({
             scope: normalizedScope,
             title: title.trim(),
@@ -91,6 +96,8 @@ const createProject = async (req, res) => {
             folders: parsedFolders,
             liveUrl,
             githubUrl,
+            showOnClientPortal: isClientPortal,
+            clientCategory: normalizedCategory,
             activityLog: [{ action: 'Project created' }]
         });
 
@@ -129,10 +136,60 @@ const getAllProjects = async (req, res) => {
                 { scope: { $exists: false } }
             ]
         })
+            .populate('employee', 'username email')
+            .populate('department', 'name')
+            .sort({ createdAt: -1 });
+        res.json(projects);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Get client portal projects (ONLY admin published showcase projects)
+// @route   GET /api/projects/portal
+// @access  Public
+const getClientPortalProjects = async (req, res) => {
+    try {
+        const projects = await Project.find({
+            showOnClientPortal: true
+        })
             .populate('employee', 'username')
             .populate('department', 'name')
             .sort({ createdAt: -1 });
         res.json(projects);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Toggle project on Client Portal showcase (Admin only)
+// @route   PATCH /api/projects/:id/toggle-portal
+// @access  Private/Admin
+const toggleClientPortal = async (req, res) => {
+    try {
+        const project = await Project.findById(req.params.id);
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        project.showOnClientPortal = !project.showOnClientPortal;
+        if (req.body.clientCategory) {
+            project.clientCategory = req.body.clientCategory;
+        }
+
+        project.activityLog.push({
+            action: project.showOnClientPortal
+                ? 'Published to Client Portal'
+                : 'Removed from Client Portal'
+        });
+
+        await project.save();
+
+        const updated = await Project.findById(project._id)
+            .populate('employee', 'username email')
+            .populate('department', 'name');
+
+        res.json(updated);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
@@ -257,13 +314,19 @@ const updateProject = async (req, res) => {
         project.liveUrl = liveUrl || project.liveUrl;
         project.githubUrl = githubUrl || project.githubUrl;
 
-        // Admin can reassign employee & department
+        // Admin can reassign employee, department, and client portal status
         if (req.user.role === 'admin') {
             if (req.body.employeeId || req.body.employee) {
                 project.employee = req.body.employeeId || req.body.employee;
             }
             if (req.body.department !== undefined) {
                 project.department = req.body.department || undefined;
+            }
+            if (req.body.showOnClientPortal !== undefined) {
+                project.showOnClientPortal = req.body.showOnClientPortal === 'true' || req.body.showOnClientPortal === true;
+            }
+            if (req.body.clientCategory !== undefined) {
+                project.clientCategory = req.body.clientCategory;
             }
         }
 
@@ -292,6 +355,8 @@ module.exports = {
     createProject,
     getMyProjects,
     getAllProjects,
+    getClientPortalProjects,
+    toggleClientPortal,
     searchProjects,
     deleteProject,
     updateProject
