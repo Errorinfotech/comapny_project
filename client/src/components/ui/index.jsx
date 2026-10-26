@@ -5,3 +5,4 @@ export * from './Badge';
 export * from './Modal';
 export * from './Select';
 export * from './Textarea';
+export * from './ConfirmDeleteModal';

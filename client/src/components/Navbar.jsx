@@ -71,30 +71,56 @@ const Navbar = () => {
         }
     };
 
-    const isOffice = location.pathname.includes('/office');
+    const isOffice = location.pathname.includes('/office') || location.pathname.startsWith('/admin') || location.pathname === '/dashboard' || location.pathname === '/upload';
     const isClient = location.pathname.includes('/client');
     const officePath = user?.role === 'admin' ? '/admin/office' : '/office';
     const clientPath = '/client-portal';
 
     return (
         <header className="h-16 sticky top-0 z-40 flex items-center justify-between px-6 sm:px-8 border-b border-sky-100/80 dark:border-[#121c42] bg-white dark:bg-[#060d24] transition-colors">
-            {/* Spotlight Search Bar */}
-            <div className="flex-1 max-w-md">
-                <div className="relative group">
-                    <Search className={`absolute left-4 top-2.5 h-4 w-4 transition-colors ${searchQuery ? 'text-sky-700 dark:text-sky-400' : 'text-slate-400 group-focus-within:text-sky-700 dark:group-focus-within:text-sky-400'}`} />
-                    <input
-                        ref={searchInputRef}
-                        type="text"
-                        placeholder="Search projects, employees..."
-                        className="w-full bg-[#edf4fb] dark:bg-[#0a1438] border border-sky-100/80 dark:border-[#14235a] focus:border-sky-300 dark:focus:border-sky-500 rounded-2xl py-2 pl-11 pr-16 text-xs font-medium focus:ring-2 focus:ring-sky-200/50 dark:focus:ring-sky-900/40 focus:bg-white dark:focus:bg-[#0e1d52] focus:outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 text-slate-800 dark:text-slate-100 shadow-2xs"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        onKeyDown={handleSearch}
-                    />
-                    <div className="absolute right-2.5 top-2 hidden sm:flex items-center space-x-1 px-2 py-0.5 rounded-lg bg-white/90 dark:bg-[#0a1438] border border-sky-200/60 dark:border-[#14235a] text-[10px] font-semibold text-slate-400 dark:text-slate-400 pointer-events-none shadow-2xs">
-                        <kbd>Ctrl</kbd>
-                        <span>+</span>
-                        <kbd>K</kbd>
+            {/* Left: Brand Identity + Search */}
+            <div className="flex items-center space-x-4 sm:space-x-6 flex-1 max-w-2xl">
+                <div
+                    className="flex items-center space-x-2.5 cursor-pointer group select-none shrink-0"
+                    onClick={() => navigate(officePath)}
+                    title="Go to Office Structure"
+                >
+                    <div className="relative shrink-0">
+                        <img
+                            src="/error.jpeg"
+                            alt="Error Infotech"
+                            className="w-9 h-9 rounded-full object-contain bg-white p-0.5 shadow-md border border-slate-200 dark:border-white/20 group-hover:scale-105 transition-transform"
+                        />
+                        <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white dark:border-[#060d24]" title="System Online" />
+                    </div>
+                    <div className="hidden md:block">
+                        <span className="text-sm font-extrabold text-slate-900 dark:text-white tracking-tight truncate block leading-tight">
+                            Error Infotech
+                        </span>
+                        <span className="text-[9.5px] text-blue-600 dark:text-cyan-400 uppercase tracking-widest font-bold block mt-0.5">
+                            COMPANY PORTAL
+                        </span>
+                    </div>
+                </div>
+
+                {/* Spotlight Search Bar */}
+                <div className="flex-1 max-w-md">
+                    <div className="relative group">
+                        <Search className={`absolute left-4 top-2.5 h-4 w-4 transition-colors ${searchQuery ? 'text-sky-700 dark:text-sky-400' : 'text-slate-400 group-focus-within:text-sky-700 dark:group-focus-within:text-sky-400'}`} />
+                        <input
+                            ref={searchInputRef}
+                            type="text"
+                            placeholder="Search projects, employees..."
+                            className="w-full bg-[#edf4fb] dark:bg-[#0a1438] border border-sky-100/80 dark:border-[#14235a] focus:border-sky-300 dark:focus:border-sky-500 rounded-2xl py-2 pl-11 pr-16 text-xs font-medium focus:ring-2 focus:ring-sky-200/50 dark:focus:ring-sky-900/40 focus:bg-white dark:focus:bg-[#0e1d52] focus:outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 text-slate-800 dark:text-slate-100 shadow-2xs"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={handleSearch}
+                        />
+                        <div className="absolute right-2.5 top-2 hidden sm:flex items-center space-x-1 px-2 py-0.5 rounded-lg bg-white/90 dark:bg-[#0a1438] border border-sky-200/60 dark:border-[#14235a] text-[10px] font-semibold text-slate-400 dark:text-slate-400 pointer-events-none shadow-2xs">
+                            <kbd>Ctrl</kbd>
+                            <span>+</span>
+                            <kbd>K</kbd>
+                        </div>
                     </div>
                 </div>
             </div>

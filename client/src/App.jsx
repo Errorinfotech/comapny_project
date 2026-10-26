@@ -1,13 +1,11 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
-import AdminDashboard from './pages/AdminDashboard';
 import Departments from './pages/Departments';
 import Employees from './pages/Employees';
 import AdminProjects from './pages/AdminProjects';
 import SearchResults from './pages/SearchResults';
 import MyProjects from './pages/MyProjects';
-import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import Profile from './pages/Profile';
 import UploadRedirect from './pages/UploadRedirect';
@@ -32,14 +30,11 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
   }
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-tr from-[#e6f1fc] via-[#edf5fd] to-[#f6faff] dark:from-[#060b19] dark:via-[#091126] dark:to-[#060a17] dark:bg-[#060b19] text-slate-900 dark:text-slate-100 transition-colors duration-300">
-      <Sidebar />
-      <div className="flex-1 flex flex-col pl-64">
-        <Navbar />
-        <main className="flex-1 p-8">
-          {children}
-        </main>
-      </div>
+    <div className="min-h-screen bg-gradient-to-tr from-[#e6f1fc] via-[#edf5fd] to-[#f6faff] dark:from-[#060b19] dark:via-[#091126] dark:to-[#060a17] dark:bg-[#060b19] text-slate-900 dark:text-slate-100 transition-colors duration-300 flex flex-col">
+      <Navbar />
+      <main className="flex-1 p-6 sm:p-8 max-w-7xl mx-auto w-full">
+        {children}
+      </main>
     </div>
   );
 };
@@ -85,7 +80,7 @@ function App() {
             {/* Admin Routes */}
             <Route path="/admin" element={
               <ProtectedRoute adminOnly>
-                <AdminDashboard />
+                <Office />
               </ProtectedRoute>
             } />
             <Route path="/admin/office" element={

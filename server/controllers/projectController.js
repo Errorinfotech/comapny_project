@@ -52,12 +52,40 @@ const createProject = async (req, res) => {
             }
         }
 
+        let assignedEmployee = req.user._id;
+        if (req.user.role === 'admin' && (req.body.employeeId || req.body.employee)) {
+            assignedEmployee = req.body.employeeId || req.body.employee;
+        }
+
+        let assignedDept = req.body.department || req.body.departmentId || req.user.department || undefined;
+        if (assignedDept && typeof assignedDept === 'string' && assignedDept.startsWith('temp-')) {
+            const deptName = req.body.departmentName;
+            if (deptName) {
+                const Department = require('../models/Department');
+                const foundDept = await Department.findOne({
+                    name: { $regex: new RegExp(`^${deptName}$`, 'i') }
+                });
+                if (foundDept) assignedDept = foundDept._id;
+                else assignedDept = undefined;
+            } else {
+                assignedDept = undefined;
+            }
+        }
+
+        // If department was not explicitly selected but employee belongs to a department, auto-link it
+        if (!assignedDept && assignedEmployee) {
+            const empUser = await User.findById(assignedEmployee);
+            if (empUser && empUser.department) {
+                assignedDept = empUser.department;
+            }
+        }
+
         const project = await Project.create({
             scope: normalizedScope,
             title: title.trim(),
             description,
-            employee: req.user._id,
-            department: req.user.department || undefined,
+            employee: assignedEmployee,
+            department: assignedDept,
             files,
             thumbnail,
             folders: parsedFolders,
@@ -229,6 +257,16 @@ const updateProject = async (req, res) => {
         project.description = description || project.description;
         project.liveUrl = liveUrl || project.liveUrl;
         project.githubUrl = githubUrl || project.githubUrl;
+
+        // Admin can reassign employee & department
+        if (req.user.role === 'admin') {
+            if (req.body.employeeId || req.body.employee) {
+                project.employee = req.body.employeeId || req.body.employee;
+            }
+            if (req.body.department !== undefined) {
+                project.department = req.body.department || undefined;
+            }
+        }
 
         // Handle thumbnail update
         if (req.files && req.files['thumbnail'] && req.files['thumbnail'][0]) {
