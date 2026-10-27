@@ -9,7 +9,7 @@ import {
     User,
     Briefcase
 } from 'lucide-react';
-import api, { BASE_URL } from '../api';
+import api, { BASE_URL, getStorageUrl } from '../api';
 import { useAuth } from '../context/AuthContext';
 
 const ProjectEngine = ({
@@ -72,7 +72,7 @@ const ProjectEngine = ({
             setGithubUrl(project.githubUrl || '');
             setFiles([]);
             setThumbnailFile(null);
-            setThumbnailPreview(project.thumbnail ? `${BASE_URL}/uploads/${project.thumbnail}` : null);
+            setThumbnailPreview(project.thumbnail ? getStorageUrl(project.thumbnail) : null);
             setUploadMode('files');
             setSelectedEmployeeId(project.employee?._id || project.employee || '');
             setSelectedDepartmentId(project.department?._id || project.department || '');

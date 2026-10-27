@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import api, { BASE_URL } from '../api';
+import api, { BASE_URL, getStorageUrl } from '../api';
 import {
     Folder,
     ExternalLink,
@@ -54,7 +54,7 @@ const AdminProjectDetailsModal = ({ project, isOpen, onClose }) => {
                     <div className="relative h-48 bg-gradient-to-r from-blue-700 via-indigo-700 to-sky-600 overflow-hidden shrink-0">
                         {project.thumbnail ? (
                             <img
-                                src={`${BASE_URL}/uploads/${encodeURIComponent(project.thumbnail)}`}
+                                src={getStorageUrl(project.thumbnail)}
                                 alt={project.title}
                                 className="w-full h-full object-cover opacity-85"
                                 onError={(e) => {
@@ -471,7 +471,7 @@ const AdminProjects = () => {
                             >
                                 {project.thumbnail ? (
                                     <img
-                                        src={`${BASE_URL}/uploads/${encodeURIComponent(project.thumbnail)}`}
+                                        src={getStorageUrl(project.thumbnail)}
                                         alt={project.title}
                                         className="curtain-img"
                                         onError={(e) => {

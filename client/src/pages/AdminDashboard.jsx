@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
-import { Briefcase, Users, FolderOpen, TrendingUp, Plus, ArrowRight, ShieldCheck, Activity } from 'lucide-react';
+import { Briefcase, Users, FolderOpen, FolderKanban, TrendingUp, Plus, ArrowRight, ShieldCheck, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card, Badge, Button } from '@/components/ui';
 
@@ -41,10 +41,10 @@ const AdminDashboard = () => {
             onClick: () => navigate('/admin/departments')
         },
         {
-            name: 'Active Development Units',
+            name: 'Total Developed Projects',
             value: stats.totalProjects,
             subtext: 'In Production',
-            icon: FolderOpen,
+            icon: FolderKanban,
             iconStyle: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400',
             badgeText: '100% Active Work',
             badgeStyle: 'bg-emerald-50/80 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-900/50',

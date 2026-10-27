@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import api, { BASE_URL } from '../api';
+import api, { BASE_URL, getStorageUrl } from '../api';
 import {
     Plus,
     Folder,
@@ -513,7 +513,7 @@ const MyProjects = ({ defaultOpenUpload = false }) => {
                             <div className="relative h-44 w-full bg-gradient-to-tr from-slate-100 to-sky-50 dark:from-[#091438] dark:to-[#0d1e56] overflow-hidden">
                                 {project.thumbnail ? (
                                     <img
-                                        src={`${BASE_URL}/uploads/${encodeURIComponent(project.thumbnail)}`}
+                                        src={getStorageUrl(project.thumbnail)}
                                         alt={project.title}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                         onError={(e) => {

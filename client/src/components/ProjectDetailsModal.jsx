@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BASE_URL } from '../api';
+import { BASE_URL, getStorageUrl } from '../api';
 import { 
     X, 
     Folder, 
@@ -111,11 +111,7 @@ const ProjectDetailsModal = ({ project, isOpen, onClose }) => {
                         {/* Background Thumbnail if available and not errored */}
                         {project.thumbnail && !imgError && (
                             <img
-                                src={
-                                    project.thumbnail.startsWith('http')
-                                        ? project.thumbnail
-                                        : `${BASE_URL}/uploads/${encodeURIComponent(project.thumbnail)}`
-                                }
+                                src={getStorageUrl(project.thumbnail)}
                                 alt=""
                                 onError={() => setImgError(true)}
                                 className="absolute inset-0 w-full h-full object-cover opacity-25 mix-blend-overlay"

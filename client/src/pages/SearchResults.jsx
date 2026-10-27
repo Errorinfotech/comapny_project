@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import api, { BASE_URL } from '../api';
+import api, { BASE_URL, getStorageUrl } from '../api';
 import { Search, Folder, User, Briefcase, FileText, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -82,7 +82,7 @@ const SearchResults = () => {
                                         {project.thumbnail && (
                                             <div className="absolute inset-0 z-0">
                                                 <img
-                                                    src={`${BASE_URL}/uploads/${encodeURIComponent(project.thumbnail)}`}
+                                                    src={getStorageUrl(project.thumbnail)}
                                                     alt=""
                                                     className="h-full w-full object-cover opacity-80"
                                                     onError={(e) => {

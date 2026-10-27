@@ -2,6 +2,7 @@ const Project = require('../models/Project');
 const User = require('../models/User');
 const path = require('path');
 const fs = require('fs');
+const r2 = require('../config/r2');
 
 // @desc    Create a new project/upload
 // @route   POST /api/projects
@@ -23,15 +24,66 @@ const createProject = async (req, res) => {
             }
         }
 
-        const files = uploadedFiles.map((file, index) => ({
-            name: file.originalname,
-            path: file.path.replace(/\\/g, '/'),
-            size: file.size,
-            type: file.mimetype,
-            relativePath: relativePaths[index] || file.originalname
-        }));
+        let files = [];
+        if (r2.isR2Configured && uploadedFiles.length > 0) {
+            const chunkSize = 10;
+            for (let i = 0; i < uploadedFiles.length; i += chunkSize) {
+                const chunk = uploadedFiles.slice(i, i + chunkSize);
+                const chunkResults = await Promise.all(chunk.map(async (file, cIndex) => {
+                    const globalIndex = i + cIndex;
+                    const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+                    const fileKey = `projects/${Date.now()}-${globalIndex}-${sanitizedName}`;
+                    try {
+                        const uploadRes = await r2.uploadFile(file.path, fileKey, file.mimetype);
+                        try { fs.unlinkSync(file.path); } catch (e) {}
+                        return {
+                            name: file.originalname,
+                            path: uploadRes.url,
+                            size: file.size,
+                            type: file.mimetype,
+                            relativePath: relativePaths[globalIndex] || file.originalname
+                        };
+                    } catch (uploadErr) {
+                        console.error(`Failed to upload ${file.originalname} to R2:`, uploadErr);
+                        return {
+                            name: file.originalname,
+                            path: file.path.replace(/\\/g, '/'),
+                            size: file.size,
+                            type: file.mimetype,
+                            relativePath: relativePaths[globalIndex] || file.originalname
+                        };
+                    }
+                }));
+                files.push(...chunkResults);
+            }
+        } else {
+            files = uploadedFiles.map((file, index) => ({
+                name: file.originalname,
+                path: file.path.replace(/\\/g, '/'),
+                size: file.size,
+                type: file.mimetype,
+                relativePath: relativePaths[index] || file.originalname
+            }));
+        }
 
-        const thumbnail = uploadedThumbnail[0] ? path.basename(uploadedThumbnail[0].path) : '';
+        let thumbnail = '';
+        if (uploadedThumbnail[0]) {
+            const thumbFile = uploadedThumbnail[0];
+            if (r2.isR2Configured) {
+                const sanitizedThumbName = thumbFile.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+                const thumbKey = `Thumbnails/${Date.now()}-${sanitizedThumbName}`;
+                try {
+                    const uploadRes = await r2.uploadFile(thumbFile.path, thumbKey, thumbFile.mimetype);
+                    thumbnail = uploadRes.url;
+                    try { fs.unlinkSync(thumbFile.path); } catch (e) {}
+                } catch (thumbErr) {
+                    console.error('Failed to upload thumbnail to R2:', thumbErr);
+                    thumbnail = path.basename(thumbFile.path);
+                }
+            } else {
+                thumbnail = path.basename(thumbFile.path);
+            }
+        }
 
         if (!title || !title.trim()) {
             return res.status(400).json({ message: 'Project title is required' });
@@ -270,19 +322,39 @@ const deleteProject = async (req, res) => {
             return res.status(401).json({ message: 'Not authorized' });
         }
 
-        // Delete actual files from disk
-        project.files.forEach(file => {
-            const filePath = path.resolve(file.path);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
+        // Delete actual files from R2 or local disk
+        for (const file of project.files) {
+            if (file && file.path) {
+                if (
+                    file.path.startsWith('http://') ||
+                    file.path.startsWith('https://') ||
+                    file.path.startsWith('/api/storage/') ||
+                    file.path.startsWith('projects/')
+                ) {
+                    await r2.deleteFile(file.path);
+                } else {
+                    const filePath = path.resolve(file.path);
+                    if (fs.existsSync(filePath)) {
+                        try { fs.unlinkSync(filePath); } catch (e) {}
+                    }
+                }
             }
-        });
+        }
 
-        // Delete thumbnail if exists
+        // Delete thumbnail if exists from R2 or local disk
         if (project.thumbnail) {
-            const thumbPath = path.resolve('uploads', project.thumbnail);
-            if (fs.existsSync(thumbPath)) {
-                fs.unlinkSync(thumbPath);
+            if (
+                project.thumbnail.startsWith('http://') ||
+                project.thumbnail.startsWith('https://') ||
+                project.thumbnail.startsWith('/api/storage/') ||
+                project.thumbnail.startsWith('Thumbnails/')
+            ) {
+                await r2.deleteFile(project.thumbnail);
+            } else {
+                const thumbPath = path.resolve('uploads', project.thumbnail);
+                if (fs.existsSync(thumbPath)) {
+                    try { fs.unlinkSync(thumbPath); } catch (e) {}
+                }
             }
         }
 
@@ -332,14 +404,38 @@ const updateProject = async (req, res) => {
 
         // Handle thumbnail update
         if (req.files && req.files['thumbnail'] && req.files['thumbnail'][0]) {
-            // Delete old thumbnail if exists
+            const newThumbFile = req.files['thumbnail'][0];
+            // Delete old thumbnail if exists from R2 or local disk
             if (project.thumbnail) {
-                const oldThumbPath = path.resolve('uploads', project.thumbnail);
-                if (fs.existsSync(oldThumbPath)) {
-                    fs.unlinkSync(oldThumbPath);
+                if (
+                    project.thumbnail.startsWith('http://') ||
+                    project.thumbnail.startsWith('https://') ||
+                    project.thumbnail.startsWith('/api/storage/') ||
+                    project.thumbnail.startsWith('Thumbnails/')
+                ) {
+                    await r2.deleteFile(project.thumbnail);
+                } else {
+                    const oldThumbPath = path.resolve('uploads', project.thumbnail);
+                    if (fs.existsSync(oldThumbPath)) {
+                        try { fs.unlinkSync(oldThumbPath); } catch (e) {}
+                    }
                 }
             }
-            project.thumbnail = path.basename(req.files['thumbnail'][0].path);
+
+            if (r2.isR2Configured) {
+                const sanitizedThumbName = newThumbFile.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+                const thumbKey = `Thumbnails/${Date.now()}-${sanitizedThumbName}`;
+                try {
+                    const uploadRes = await r2.uploadFile(newThumbFile.path, thumbKey, newThumbFile.mimetype);
+                    project.thumbnail = uploadRes.url;
+                    try { fs.unlinkSync(newThumbFile.path); } catch (e) {}
+                } catch (thumbErr) {
+                    console.error('Failed to upload updated thumbnail to R2:', thumbErr);
+                    project.thumbnail = path.basename(newThumbFile.path);
+                }
+            } else {
+                project.thumbnail = path.basename(newThumbFile.path);
+            }
         }
 
         project.activityLog.push({ action: 'Project metadata updated' });
