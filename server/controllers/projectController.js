@@ -2,13 +2,14 @@ const Project = require('../models/Project');
 const User = require('../models/User');
 const path = require('path');
 const fs = require('fs');
+const r2 = require('../config/r2');
 
 // @desc    Create a new project/upload
 // @route   POST /api/projects
 // @access  Private
 const createProject = async (req, res) => {
     try {
-        const { title, description, liveUrl, githubUrl, folders, scope } = req.body;
+        const { title, description, liveUrl, githubUrl, folders, scope, showOnClientPortal, clientCategory } = req.body;
 
         const uploadedFiles = req.files?.files || [];
         const uploadedThumbnail = req.files?.thumbnail || [];
@@ -23,15 +24,66 @@ const createProject = async (req, res) => {
             }
         }
 
-        const files = uploadedFiles.map((file, index) => ({
-            name: file.originalname,
-            path: file.path.replace(/\\/g, '/'),
-            size: file.size,
-            type: file.mimetype,
-            relativePath: relativePaths[index] || file.originalname
-        }));
+        let files = [];
+        if (r2.isR2Configured && uploadedFiles.length > 0) {
+            const chunkSize = 10;
+            for (let i = 0; i < uploadedFiles.length; i += chunkSize) {
+                const chunk = uploadedFiles.slice(i, i + chunkSize);
+                const chunkResults = await Promise.all(chunk.map(async (file, cIndex) => {
+                    const globalIndex = i + cIndex;
+                    const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+                    const fileKey = `projects/${Date.now()}-${globalIndex}-${sanitizedName}`;
+                    try {
+                        const uploadRes = await r2.uploadFile(file.path, fileKey, file.mimetype);
+                        try { fs.unlinkSync(file.path); } catch (e) {}
+                        return {
+                            name: file.originalname,
+                            path: uploadRes.url,
+                            size: file.size,
+                            type: file.mimetype,
+                            relativePath: relativePaths[globalIndex] || file.originalname
+                        };
+                    } catch (uploadErr) {
+                        console.error(`Failed to upload ${file.originalname} to R2:`, uploadErr);
+                        return {
+                            name: file.originalname,
+                            path: file.path.replace(/\\/g, '/'),
+                            size: file.size,
+                            type: file.mimetype,
+                            relativePath: relativePaths[globalIndex] || file.originalname
+                        };
+                    }
+                }));
+                files.push(...chunkResults);
+            }
+        } else {
+            files = uploadedFiles.map((file, index) => ({
+                name: file.originalname,
+                path: file.path.replace(/\\/g, '/'),
+                size: file.size,
+                type: file.mimetype,
+                relativePath: relativePaths[index] || file.originalname
+            }));
+        }
 
-        const thumbnail = uploadedThumbnail[0] ? path.basename(uploadedThumbnail[0].path) : '';
+        let thumbnail = '';
+        if (uploadedThumbnail[0]) {
+            const thumbFile = uploadedThumbnail[0];
+            if (r2.isR2Configured) {
+                const sanitizedThumbName = thumbFile.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+                const thumbKey = `Thumbnails/${Date.now()}-${sanitizedThumbName}`;
+                try {
+                    const uploadRes = await r2.uploadFile(thumbFile.path, thumbKey, thumbFile.mimetype);
+                    thumbnail = uploadRes.url;
+                    try { fs.unlinkSync(thumbFile.path); } catch (e) {}
+                } catch (thumbErr) {
+                    console.error('Failed to upload thumbnail to R2:', thumbErr);
+                    thumbnail = path.basename(thumbFile.path);
+                }
+            } else {
+                thumbnail = path.basename(thumbFile.path);
+            }
+        }
 
         if (!title || !title.trim()) {
             return res.status(400).json({ message: 'Project title is required' });
@@ -52,17 +104,52 @@ const createProject = async (req, res) => {
             }
         }
 
+        let assignedEmployee = req.user._id;
+        if (req.user.role === 'admin' && (req.body.employeeId || req.body.employee)) {
+            assignedEmployee = req.body.employeeId || req.body.employee;
+        }
+
+        let assignedDept = req.body.department || req.body.departmentId || req.user.department || undefined;
+        if (assignedDept && typeof assignedDept === 'string' && assignedDept.startsWith('temp-')) {
+            const deptName = req.body.departmentName;
+            if (deptName) {
+                const Department = require('../models/Department');
+                const foundDept = await Department.findOne({
+                    name: { $regex: new RegExp(`^${deptName}$`, 'i') }
+                });
+                if (foundDept) assignedDept = foundDept._id;
+                else assignedDept = undefined;
+            } else {
+                assignedDept = undefined;
+            }
+        }
+
+        // If department was not explicitly selected but employee belongs to a department, auto-link it
+        if (!assignedDept && assignedEmployee) {
+            const empUser = await User.findById(assignedEmployee);
+            if (empUser && empUser.department) {
+                assignedDept = empUser.department;
+            }
+        }
+
+        const isClientPortal = req.user.role === 'admin'
+            ? (showOnClientPortal === 'true' || showOnClientPortal === true)
+            : false;
+        const normalizedCategory = req.user.role === 'admin' ? (clientCategory || '') : '';
+
         const project = await Project.create({
             scope: normalizedScope,
             title: title.trim(),
             description,
-            employee: req.user._id,
-            department: req.user.department || undefined,
+            employee: assignedEmployee,
+            department: assignedDept,
             files,
             thumbnail,
             folders: parsedFolders,
             liveUrl,
             githubUrl,
+            showOnClientPortal: isClientPortal,
+            clientCategory: normalizedCategory,
             activityLog: [{ action: 'Project created' }]
         });
 
@@ -79,12 +166,11 @@ const createProject = async (req, res) => {
 const getMyProjects = async (req, res) => {
     try {
         const projects = await Project.find({
-            employee: req.user._id,
-            $or: [
-                { scope: 'workspace' },
-                { scope: { $exists: false } }
-            ]
-        }).sort({ createdAt: -1 });
+            employee: req.user._id
+        })
+        .populate('department', 'name')
+        .populate('employee', 'username email')
+        .sort({ createdAt: -1 });
         res.json(projects);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
@@ -102,10 +188,60 @@ const getAllProjects = async (req, res) => {
                 { scope: { $exists: false } }
             ]
         })
+            .populate('employee', 'username email')
+            .populate('department', 'name')
+            .sort({ createdAt: -1 });
+        res.json(projects);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Get client portal projects (ONLY admin published showcase projects)
+// @route   GET /api/projects/portal
+// @access  Public
+const getClientPortalProjects = async (req, res) => {
+    try {
+        const projects = await Project.find({
+            showOnClientPortal: true
+        })
             .populate('employee', 'username')
             .populate('department', 'name')
             .sort({ createdAt: -1 });
         res.json(projects);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Toggle project on Client Portal showcase (Admin only)
+// @route   PATCH /api/projects/:id/toggle-portal
+// @access  Private/Admin
+const toggleClientPortal = async (req, res) => {
+    try {
+        const project = await Project.findById(req.params.id);
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        project.showOnClientPortal = !project.showOnClientPortal;
+        if (req.body.clientCategory) {
+            project.clientCategory = req.body.clientCategory;
+        }
+
+        project.activityLog.push({
+            action: project.showOnClientPortal
+                ? 'Published to Client Portal'
+                : 'Removed from Client Portal'
+        });
+
+        await project.save();
+
+        const updated = await Project.findById(project._id)
+            .populate('employee', 'username email')
+            .populate('department', 'name');
+
+        res.json(updated);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
@@ -186,19 +322,39 @@ const deleteProject = async (req, res) => {
             return res.status(401).json({ message: 'Not authorized' });
         }
 
-        // Delete actual files from disk
-        project.files.forEach(file => {
-            const filePath = path.resolve(file.path);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
+        // Delete actual files from R2 or local disk
+        for (const file of project.files) {
+            if (file && file.path) {
+                if (
+                    file.path.startsWith('http://') ||
+                    file.path.startsWith('https://') ||
+                    file.path.startsWith('/api/storage/') ||
+                    file.path.startsWith('projects/')
+                ) {
+                    await r2.deleteFile(file.path);
+                } else {
+                    const filePath = path.resolve(file.path);
+                    if (fs.existsSync(filePath)) {
+                        try { fs.unlinkSync(filePath); } catch (e) {}
+                    }
+                }
             }
-        });
+        }
 
-        // Delete thumbnail if exists
+        // Delete thumbnail if exists from R2 or local disk
         if (project.thumbnail) {
-            const thumbPath = path.resolve('uploads', project.thumbnail);
-            if (fs.existsSync(thumbPath)) {
-                fs.unlinkSync(thumbPath);
+            if (
+                project.thumbnail.startsWith('http://') ||
+                project.thumbnail.startsWith('https://') ||
+                project.thumbnail.startsWith('/api/storage/') ||
+                project.thumbnail.startsWith('Thumbnails/')
+            ) {
+                await r2.deleteFile(project.thumbnail);
+            } else {
+                const thumbPath = path.resolve('uploads', project.thumbnail);
+                if (fs.existsSync(thumbPath)) {
+                    try { fs.unlinkSync(thumbPath); } catch (e) {}
+                }
             }
         }
 
@@ -230,16 +386,56 @@ const updateProject = async (req, res) => {
         project.liveUrl = liveUrl || project.liveUrl;
         project.githubUrl = githubUrl || project.githubUrl;
 
+        // Admin can reassign employee, department, and client portal status
+        if (req.user.role === 'admin') {
+            if (req.body.employeeId || req.body.employee) {
+                project.employee = req.body.employeeId || req.body.employee;
+            }
+            if (req.body.department !== undefined) {
+                project.department = req.body.department || undefined;
+            }
+            if (req.body.showOnClientPortal !== undefined) {
+                project.showOnClientPortal = req.body.showOnClientPortal === 'true' || req.body.showOnClientPortal === true;
+            }
+            if (req.body.clientCategory !== undefined) {
+                project.clientCategory = req.body.clientCategory;
+            }
+        }
+
         // Handle thumbnail update
         if (req.files && req.files['thumbnail'] && req.files['thumbnail'][0]) {
-            // Delete old thumbnail if exists
+            const newThumbFile = req.files['thumbnail'][0];
+            // Delete old thumbnail if exists from R2 or local disk
             if (project.thumbnail) {
-                const oldThumbPath = path.resolve('uploads', project.thumbnail);
-                if (fs.existsSync(oldThumbPath)) {
-                    fs.unlinkSync(oldThumbPath);
+                if (
+                    project.thumbnail.startsWith('http://') ||
+                    project.thumbnail.startsWith('https://') ||
+                    project.thumbnail.startsWith('/api/storage/') ||
+                    project.thumbnail.startsWith('Thumbnails/')
+                ) {
+                    await r2.deleteFile(project.thumbnail);
+                } else {
+                    const oldThumbPath = path.resolve('uploads', project.thumbnail);
+                    if (fs.existsSync(oldThumbPath)) {
+                        try { fs.unlinkSync(oldThumbPath); } catch (e) {}
+                    }
                 }
             }
-            project.thumbnail = path.basename(req.files['thumbnail'][0].path);
+
+            if (r2.isR2Configured) {
+                const sanitizedThumbName = newThumbFile.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+                const thumbKey = `Thumbnails/${Date.now()}-${sanitizedThumbName}`;
+                try {
+                    const uploadRes = await r2.uploadFile(newThumbFile.path, thumbKey, newThumbFile.mimetype);
+                    project.thumbnail = uploadRes.url;
+                    try { fs.unlinkSync(newThumbFile.path); } catch (e) {}
+                } catch (thumbErr) {
+                    console.error('Failed to upload updated thumbnail to R2:', thumbErr);
+                    project.thumbnail = path.basename(newThumbFile.path);
+                }
+            } else {
+                project.thumbnail = path.basename(newThumbFile.path);
+            }
         }
 
         project.activityLog.push({ action: 'Project metadata updated' });
@@ -255,6 +451,8 @@ module.exports = {
     createProject,
     getMyProjects,
     getAllProjects,
+    getClientPortalProjects,
+    toggleClientPortal,
     searchProjects,
     deleteProject,
     updateProject

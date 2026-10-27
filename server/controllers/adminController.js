@@ -163,17 +163,25 @@ const getEmployees = async (req, res) => {
 // @route   GET /api/admin/projects
 // @access  Private/Admin
 const getAllProjects = async (req, res) => {
-    const { employeeId } = req.query;
+    const { employeeId, dept, deptId, deptName } = req.query;
     try {
-        const filter = {
-            $or: [
-                { scope: 'workspace' },
-                { scope: { $exists: false } }
-            ]
-        };
+        const filter = {};
         if (employeeId) {
             filter.employee = employeeId;
         }
+
+        const targetDeptId = dept || deptId;
+        if (targetDeptId && targetDeptId !== 'undefined' && !targetDeptId.startsWith('temp-')) {
+            filter.department = targetDeptId;
+        } else if (deptName) {
+            const matchedDept = await Department.findOne({
+                name: { $regex: new RegExp(`^${deptName}$`, 'i') }
+            });
+            if (matchedDept) {
+                filter.department = matchedDept._id;
+            }
+        }
+
         const projects = await Project.find(filter)
             .populate('employee', 'username')
             .populate('department', 'name')

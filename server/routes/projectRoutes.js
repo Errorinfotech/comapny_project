@@ -4,6 +4,8 @@ const {
     createProject,
     getMyProjects,
     getAllProjects,
+    getClientPortalProjects,
+    toggleClientPortal,
     searchProjects,
     deleteProject,
     updateProject
@@ -11,11 +13,15 @@ const {
 const { protect, adminOnly } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
+// Public/portal projects for client portfolio exploration (Admin-published only)
+router.get('/portal', getClientPortalProjects);
+
 router.use(protect);
 
 router.get('/', adminOnly, getAllProjects);
 router.get('/my', getMyProjects);
 router.get('/search', searchProjects);
+router.patch('/:id/toggle-portal', adminOnly, toggleClientPortal);
 router.post('/', (req, res, next) => {
     upload.fields([{ name: 'files', maxCount: 50000 }, { name: 'thumbnail', maxCount: 1 }])(req, res, (err) => {
         if (err instanceof require('multer').MulterError) {

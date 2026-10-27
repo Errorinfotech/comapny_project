@@ -7,11 +7,26 @@ const Project = require('../models/Project');
 // @access  Private
 const getOfficeOverview = async (req, res) => {
     try {
+        const requiredDepartments = [
+            { name: 'developers', description: 'all developer team' },
+            { name: 'Digital Marketing', description: 'Digital Marketing Team' },
+            { name: 'Graphic Designing', description: 'Creative UI/UX & Graphic Design Team' }
+        ];
+
+        for (const dept of requiredDepartments) {
+            const exists = await Department.findOne({
+                name: { $regex: new RegExp(`^${dept.name}$`, 'i') }
+            });
+            if (!exists) {
+                await Department.create(dept);
+            }
+        }
+
         const [departments, employees, projects] = await Promise.all([
             Department.find({}).sort({ name: 1 }),
             User.find({ role: 'employee' }).select('username department createdAt').populate('department', 'name'),
-            Project.find({ scope: 'office' })
-                .populate('employee', 'username')
+            Project.find({})
+                .populate('employee', 'username department')
                 .populate('department', 'name')
                 .sort({ createdAt: -1 })
         ]);

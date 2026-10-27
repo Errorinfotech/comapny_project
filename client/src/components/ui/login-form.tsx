@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { User, Lock, ArrowRight } from 'lucide-react';
 
 // Vertex shader source code
@@ -82,7 +82,7 @@ export function SmokeyBackground({
   backdropBlurAmount = "sm",
   color = "#1E40AF", // Default dark blue
   className = "",
-}: SmokeyBackgroundProps): JSX.Element {
+}: SmokeyBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
@@ -208,14 +208,16 @@ export function LoginForm({
   password, 
   setPassword, 
   error, 
-  onSubmit 
+  onSubmit,
+  loading 
 }: { 
   username?: string, 
   setUsername?: (val: string) => void, 
   password?: string, 
   setPassword?: (val: string) => void, 
   error?: string, 
-  onSubmit?: (e: React.FormEvent) => void 
+  onSubmit?: (e: any) => void,
+  loading?: boolean 
 }) {
   return (
     <div className="w-full max-w-sm p-8 space-y-6 bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 shadow-2xl">
@@ -272,10 +274,11 @@ export function LoginForm({
 
         <button
           type="submit"
-          className="group w-full flex items-center justify-center py-3 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-blue-500 transition-all duration-300"
+          disabled={loading}
+          className="group w-full flex items-center justify-center py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-blue-500 transition-all duration-300"
         >
-          Sign In
-          <ArrowRight className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
+          {loading ? 'Signing In...' : 'Sign In'}
+          {!loading && <ArrowRight className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />}
         </button>
 
       </form>

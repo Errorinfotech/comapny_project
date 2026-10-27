@@ -21,6 +21,14 @@ const projectSchema = new mongoose.Schema({
     liveUrl: { type: String },
     githubUrl: { type: String },
     thumbnail: { type: String },
+    showOnClientPortal: {
+        type: Boolean,
+        default: false
+    },
+    clientCategory: {
+        type: String,
+        default: ''
+    },
     activityLog: [{
         action: { type: String },
         timestamp: { type: Date, default: Date.now }
