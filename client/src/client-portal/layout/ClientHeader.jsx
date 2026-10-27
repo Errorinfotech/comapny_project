@@ -1,8 +1,9 @@
-import React from 'react';
-import { Sun, Moon, LogOut, Building2, Briefcase } from 'lucide-react';
+import React, { useState } from 'react';
+import { Sun, Moon, LogOut, Building2, Briefcase, HelpCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
+import SupportModal from '../dashboard/components/SupportModal';
 
 const ClientHeader = ({ 
     clientBusinessName = "Client Workspace", 
@@ -12,6 +13,7 @@ const ClientHeader = ({
 }) => {
     const { logout, user } = useAuth();
     const navigate = useNavigate();
+    const [isSupportOpen, setIsSupportOpen] = useState(false);
 
     const toggleTheme = () => {
         const isDark = document.documentElement.classList.contains('dark');
@@ -99,6 +101,17 @@ const ClientHeader = ({
                         </div>
                     )}
 
+                    {/* Client Support Button */}
+                    <button
+                        type="button"
+                        onClick={() => setIsSupportOpen(true)}
+                        className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-white dark:bg-[#070e28] text-slate-700 dark:text-slate-200 border border-[#CBDCF8] dark:border-[#1E3A8A]/60 shadow-xs hover:bg-[#EDF6FF] dark:hover:bg-[#101f56] hover:border-[#2463EB]/50 text-xs font-bold transition-all cursor-pointer group"
+                        title="Client Support"
+                    >
+                        <HelpCircle className="w-4 h-4 text-[#2463EB] dark:text-sky-400 group-hover:scale-110 transition-transform" />
+                        <span>Client Support</span>
+                    </button>
+
                     {/* Dark/Light Theme Button */}
                     <button
                         type="button"
@@ -124,6 +137,13 @@ const ClientHeader = ({
                     </button>
                 </div>
             </div>
+
+            {/* Support Modal */}
+            <SupportModal
+                isOpen={isSupportOpen}
+                onClose={() => setIsSupportOpen(false)}
+                clientName={clientBusinessName}
+            />
         </header>
     );
 };

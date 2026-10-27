@@ -142,7 +142,7 @@ const ClientDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [isSupportOpen, setIsSupportOpen] = useState(false);
-    const [selectedServiceFilter, setSelectedServiceFilter] = useState('all-businesses');
+    const [selectedServiceFilter, setSelectedServiceFilter] = useState('website');
 
     // Fetch dynamic client links from backend
     const fetchLinks = async () => {

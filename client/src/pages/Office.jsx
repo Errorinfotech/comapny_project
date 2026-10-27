@@ -645,7 +645,11 @@ const Office = () => {
                                         <span>@{project.employee?.username || 'team'}</span>
                                     </div>
                                     <div className="mt-3 flex items-center gap-3 flex-wrap text-xs">
-                                        <span className="font-semibold text-blue-600">{project.files?.length || 0} files</span>
+                                        {project.files && project.files.length > 0 && (
+                                            <span className="font-semibold text-blue-600">
+                                                {project.files.length} {project.files.length === 1 ? 'file' : 'files'}
+                                            </span>
+                                        )}
                                         {project.liveUrl && (
                                             <a
                                                 href={project.liveUrl}

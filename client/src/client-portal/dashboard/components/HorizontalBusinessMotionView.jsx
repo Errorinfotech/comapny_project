@@ -8,16 +8,19 @@ import {
     HelpCircle, Globe, Code, Palette, Megaphone,
     ExternalLink, Eye, Folder, FileText, ArrowUpRight
 } from 'lucide-react';
-import api, { BASE_URL } from '../../../api';
+import api, { BASE_URL, getStorageUrl } from '../../../api';
 import ProjectDetailsModal from '../../../components/ProjectDetailsModal';
 
+export const ALL_BUSINESSES_FILTER = { id: 'all-businesses', label: 'All Businesses', icon: Building2 };
+
 export const SERVICE_FILTERS = [
-    { id: 'all-businesses', label: 'All Businesses', icon: Building2 },
     { id: 'website', label: 'Website', icon: Globe },
     { id: 'software', label: 'Software', icon: Code },
     { id: 'graphics', label: 'Graphics', icon: Palette },
     { id: 'digital-marketing', label: 'Digital Marketing', icon: Megaphone }
 ];
+
+export const ALL_FILTERS = [ALL_BUSINESSES_FILTER, ...SERVICE_FILTERS];
 
 export const BUSINESS_SECTORS = [
   {
@@ -110,7 +113,7 @@ const HorizontalBusinessMotionView = ({
     configuredCounts = {},
     subtypeCounts = {},
     onOpenSupport,
-    activeServiceFilter = 'all-businesses',
+    activeServiceFilter = 'website',
     onServiceFilterChange
 }) => {
     const [localServiceFilter, setLocalServiceFilter] = useState(activeServiceFilter);
@@ -323,7 +326,7 @@ const HorizontalBusinessMotionView = ({
         setDetailsProject(card);
     };
 
-    const currentFilterObj = SERVICE_FILTERS.find(f => f.id === currentServiceFilter);
+    const currentFilterObj = ALL_FILTERS.find(f => f.id === currentServiceFilter);
 
     return (
         <motion.div
@@ -338,7 +341,7 @@ const HorizontalBusinessMotionView = ({
             <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-gradient-to-tr from-sky-300/15 via-blue-200/5 to-transparent blur-3xl pointer-events-none" />
 
             {/* Header: Title Banner & Filter Controls */}
-            <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-5 px-2">
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-start justify-between gap-6 mb-5 px-2">
                 <div className="flex flex-col items-start space-y-2.5 max-w-3xl relative">
                     {/* 1. Top Kicker: EXPLORE • CONNECT • GROW */}
                     <div className="w-fit">
@@ -424,8 +427,22 @@ const HorizontalBusinessMotionView = ({
                     </p>
                 </div>
 
-                {/* Right Action Controls: Service Filters (Green Box area) on top + Client Support & Prev/Next Controls */}
-                <div className="flex flex-col items-start lg:items-end space-y-3.5 self-start lg:self-end shrink-0 z-20">
+                {/* Right Action Controls: All Businesses on top + Service Filters below + Client Support & Prev/Next */}
+                <div className="flex flex-col items-start lg:items-end space-y-2.5 self-start lg:self-start lg:pt-1 shrink-0 z-20">
+                    {/* Top Row: Standalone "All Businesses" Pill (Green Box area) */}
+                    <button
+                        type="button"
+                        onClick={() => handleFilterClick('all-businesses')}
+                        className={`inline-flex items-center space-x-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer border select-none ${
+                            currentServiceFilter === 'all-businesses'
+                                ? 'bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] text-white border-blue-600 shadow-md shadow-blue-500/20'
+                                : 'bg-white/95 dark:bg-[#070e28]/95 backdrop-blur-xl border-[#CBDCF8] dark:border-[#1E3A8A]/60 text-slate-700 dark:text-slate-300 hover:text-[#1E3A8A] dark:hover:text-white hover:bg-[#EDF6FF] dark:hover:bg-[#101f56]/60 shadow-xs'
+                        }`}
+                    >
+                        <Building2 className={`w-3.5 h-3.5 ${currentServiceFilter === 'all-businesses' ? 'text-white' : 'text-[#2563EB] dark:text-sky-400'}`} />
+                        <span>All Businesses</span>
+                    </button>
+
                     {/* Service Category Filter Pills: Website, Software, Graphics, Digital Marketing */}
                     <div className="inline-flex flex-wrap items-center p-1 rounded-2xl bg-white/95 dark:bg-[#070e28]/95 backdrop-blur-xl border border-[#CBDCF8] dark:border-[#1E3A8A]/60 shadow-xs gap-1 select-none">
                         {SERVICE_FILTERS.map((item) => {
@@ -456,35 +473,7 @@ const HorizontalBusinessMotionView = ({
                         })}
                     </div>
 
-                    {/* Bottom Row: Client Support + Prev/Next Controls */}
-                    <div className="flex items-center space-x-2.5">
-                        {onOpenSupport && (
-                            <button
-                                type="button"
-                                onClick={onOpenSupport}
-                                className="inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-2xl bg-white dark:bg-[#070e28] text-slate-700 dark:text-white border border-[#D9E8FA] dark:border-[#14235a] shadow-xs hover:bg-[#EDF6FF] dark:hover:bg-[#101f56] hover:border-[#2463EB]/50 text-xs font-bold transition-all cursor-pointer group"
-                            >
-                                <HelpCircle className="w-4 h-4 text-[#2463EB] dark:text-sky-400 group-hover:scale-110 transition-transform" />
-                                <span>Client Support</span>
-                            </button>
-                        )}
-                        <button
-                            type="button"
-                            onClick={goToPrev}
-                            className="w-10 h-10 rounded-2xl bg-white dark:bg-[#070e28] text-slate-700 dark:text-white border border-[#D9E8FA] dark:border-[#14235a] shadow-sm hover:bg-[#EDF6FF] dark:hover:bg-[#101f56] hover:border-[#2463EB]/50 flex items-center justify-center transition-all cursor-pointer group active:scale-95"
-                            title="Previous Project"
-                        >
-                            <ChevronLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
-                        </button>
-                        <button
-                            type="button"
-                            onClick={goToNext}
-                            className="w-10 h-10 rounded-2xl bg-white dark:bg-[#070e28] text-slate-700 dark:text-white border border-[#D9E8FA] dark:border-[#14235a] shadow-sm hover:bg-[#EDF6FF] dark:hover:bg-[#101f56] hover:border-[#2463EB]/50 flex items-center justify-center transition-all cursor-pointer group active:scale-95"
-                            title="Next Project"
-                        >
-                            <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
-                        </button>
-                    </div>
+
                 </div>
             </div>
 
@@ -565,9 +554,7 @@ const HorizontalBusinessMotionView = ({
                         const defaultImg = CATEGORY_DEFAULT_IMAGES[currentServiceFilter] || CATEGORY_DEFAULT_IMAGES.website;
                         const imageUrl = isBusiness
                             ? (project.image || defaultImg)
-                            : (project.thumbnail
-                                ? (project.thumbnail.startsWith('http') ? project.thumbnail : `${BASE_URL}/uploads/${encodeURIComponent(project.thumbnail)}`)
-                                : defaultImg);
+                            : (project.thumbnail ? getStorageUrl(project.thumbnail) : defaultImg);
 
                         const deptLabel = isBusiness
                             ? 'Commercial Sector'
@@ -632,19 +619,11 @@ const HorizontalBusinessMotionView = ({
 
                                 {/* Top Floating Badges */}
                                 <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between z-20 pointer-events-none">
-                                    {isBusiness ? (
-                                        <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-black/60 text-white backdrop-blur-md border border-white/20">
-                                            Commercial Sector
-                                        </span>
-                                    ) : (
+                                    {isBusiness ? null : (
                                         <div />
                                     )}
 
-                                    {isBusiness ? (
-                                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/20 text-white backdrop-blur-md border border-white/20">
-                                            {project.units} Sub-Units
-                                        </span>
-                                    ) : project.liveUrl ? (
+                                    {isBusiness ? null : project.liveUrl ? (
                                         <a
                                             href={project.liveUrl}
                                             target="_blank"
