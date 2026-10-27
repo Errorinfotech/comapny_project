@@ -25,8 +25,8 @@ const getOfficeOverview = async (req, res) => {
         const [departments, employees, projects] = await Promise.all([
             Department.find({}).sort({ name: 1 }),
             User.find({ role: 'employee' }).select('username department createdAt').populate('department', 'name'),
-            Project.find({ scope: 'office' })
-                .populate('employee', 'username')
+            Project.find({})
+                .populate('employee', 'username department')
                 .populate('department', 'name')
                 .sort({ createdAt: -1 })
         ]);

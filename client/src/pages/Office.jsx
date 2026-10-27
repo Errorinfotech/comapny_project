@@ -128,16 +128,27 @@ const Office = () => {
         });
 
         const mapped = allDepts.map((department) => {
-            const departmentEmployees = employees.filter(
-                (employee) =>
-                    employee.department?._id === department._id ||
-                    employee.department?.name?.toLowerCase() === department.name?.toLowerCase()
-            );
-            const departmentProjects = projects.filter(
-                (project) =>
-                    project.department?._id === department._id ||
-                    project.department?.name?.toLowerCase() === department.name?.toLowerCase()
-            );
+            const deptIdStr = department._id?.toString();
+            const deptNameLower = (department.name || '').toLowerCase();
+
+            const departmentEmployees = employees.filter((employee) => {
+                const empDeptId = (employee.department?._id || employee.department)?.toString();
+                const empDeptName = (employee.department?.name || '').toLowerCase();
+                return (deptIdStr && empDeptId === deptIdStr) || (empDeptName && empDeptName === deptNameLower);
+            });
+
+            const empIdsInDept = new Set(departmentEmployees.map((e) => e._id?.toString()));
+
+            const departmentProjects = projects.filter((project) => {
+                const projDeptId = (project.department?._id || project.department)?.toString();
+                const projDeptName = (project.department?.name || '').toLowerCase();
+                const projEmpId = (project.employee?._id || project.employee)?.toString();
+
+                const matchesDeptDirect = (deptIdStr && projDeptId === deptIdStr) || (projDeptName && projDeptName === deptNameLower);
+                const matchesEmpInDept = Boolean(projEmpId && empIdsInDept.has(projEmpId));
+
+                return matchesDeptDirect || matchesEmpInDept;
+            });
 
             const lower = department.name?.toLowerCase() || '';
             let icon = Briefcase;

@@ -6,7 +6,7 @@ import {
     GraduationCap, Car, Home, HeartPulse,
     Gamepad2, Compass, Wrench, Sparkles, Building2,
     HelpCircle, Globe, Code, Palette, Megaphone,
-    ExternalLink, Eye, Folder, FileText
+    ExternalLink, Eye, Folder, FileText, ArrowUpRight
 } from 'lucide-react';
 import api, { BASE_URL } from '../../../api';
 import ProjectDetailsModal from '../../../components/ProjectDetailsModal';
@@ -598,10 +598,8 @@ const HorizontalBusinessMotionView = ({
                                 onClick={() => handleCardClick(project, index)}
                                 className={`absolute w-[265px] sm:w-[305px] h-[375px] sm:h-[415px] rounded-3xl cursor-pointer overflow-hidden select-none border transition-shadow duration-300 ${
                                     isCenter
-                                        ? isSelected
-                                            ? 'ring-4 ring-[#2563EB] shadow-[0_0_40px_rgba(37,99,235,0.6)] border-blue-400'
-                                            : 'ring-2 ring-blue-500/80 shadow-[0_24px_55px_-10px_rgba(15,29,64,0.45)] dark:shadow-[0_24px_55px_-10px_rgba(37,99,235,0.38)] border-white/40'
-                                        : 'shadow-lg border-white/10 hover:border-white/30'
+                                        ? 'border-white/30 shadow-[0_22px_55px_rgba(0,0,0,0.45)]'
+                                        : 'border-white/10 shadow-lg'
                                 }`}
                                 style={{
                                     transformStyle: 'preserve-3d',
@@ -634,9 +632,13 @@ const HorizontalBusinessMotionView = ({
 
                                 {/* Top Floating Badges */}
                                 <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between z-20 pointer-events-none">
-                                    <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-black/50 text-white backdrop-blur-md border border-white/20">
-                                        {deptLabel}
-                                    </span>
+                                    {isBusiness ? (
+                                        <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-black/60 text-white backdrop-blur-md border border-white/20">
+                                            Commercial Sector
+                                        </span>
+                                    ) : (
+                                        <div />
+                                    )}
 
                                     {isBusiness ? (
                                         <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/20 text-white backdrop-blur-md border border-white/20">
@@ -648,11 +650,11 @@ const HorizontalBusinessMotionView = ({
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             onClick={(e) => e.stopPropagation()}
-                                            className="pointer-events-auto flex items-center space-x-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-600/90 hover:bg-blue-600 text-white backdrop-blur-md shadow-xs transition-colors"
+                                            className="pointer-events-auto inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-white/20 hover:bg-white/30 text-white backdrop-blur-md border border-white/30 transition-all hover:scale-105 active:scale-95 shadow-sm"
                                             title="Open Live Preview"
                                         >
                                             <span>Live</span>
-                                            <ExternalLink className="w-2.5 h-2.5" />
+                                            <ArrowUpRight className="w-3.5 h-3.5 text-white/90" />
                                         </a>
                                     ) : null}
                                 </div>
