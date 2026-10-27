@@ -432,9 +432,8 @@ const Office = () => {
                         whileHover={stat.onClick ? { y: -4 } : { y: -2 }}
                         transition={{ delay: index * 0.05, duration: 0.25, ease: "easeOut" }}
                         onClick={stat.onClick}
-                        className={`group relative overflow-hidden rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-md ${stat.hoverBorder} transition-all duration-200 select-none ${
-                            stat.onClick ? 'cursor-pointer hover:shadow-lg' : ''
-                        }`}
+                        className={`group relative overflow-hidden rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-md ${stat.hoverBorder} transition-all duration-200 select-none ${stat.onClick ? 'cursor-pointer hover:shadow-lg' : ''
+                            }`}
                     >
                         {/* Top Row: Icon + Status Tag / Action */}
                         <div className="flex items-center justify-between">
@@ -508,11 +507,10 @@ const Office = () => {
                                     <div className={`w-12 h-12 rounded-2xl bg-gradient-to-tr ${department.gradient} text-white shadow-md ${department.shadow} flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105`}>
                                         <department.icon className="h-6 w-6 text-white drop-shadow-xs" />
                                     </div>
-                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold border shadow-2xs ${
-                                        department.projects.length > 0 
+                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold border shadow-2xs ${department.projects.length > 0
                                             ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60'
                                             : 'bg-sky-50 dark:bg-blue-950/60 text-blue-700 dark:text-sky-300 border-sky-200/80 dark:border-[#14235a]'
-                                    }`}>
+                                        }`}>
                                         <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
                                         <span>{department.projects.length > 0 ? 'Active' : 'Stable'}</span>
                                     </span>
@@ -623,50 +621,50 @@ const Office = () => {
                     </div>
                 </div>
 
-                    <div className="bg-white/90 dark:bg-[#070e28]/90 backdrop-blur-xl p-7 rounded-3xl shadow-lg shadow-sky-950/5 border border-sky-100/90 dark:border-[#14235a]">
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Recent Development</h2>
-                            <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-sky-400">
-                                <FolderKanban className="h-5 w-5" />
-                            </div>
+                <div className="bg-white/90 dark:bg-[#070e28]/90 backdrop-blur-xl p-7 rounded-3xl shadow-lg shadow-sky-950/5 border border-sky-100/90 dark:border-[#14235a]">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-xl font-bold text-slate-900 dark:text-white">Recent Development</h2>
+                        <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-sky-400">
+                            <FolderKanban className="h-5 w-5" />
                         </div>
+                    </div>
 
-                        <div className="space-y-3">
-                            {recentProjects.length > 0 ? (
-                                recentProjects.map((project) => (
-                                    <div
-                                        key={project._id}
-                                        className="rounded-xl border border-slate-200 dark:border-slate-800 p-4"
-                                    >
-                                        <p className="font-semibold text-slate-900 dark:text-white truncate">{project.title}</p>
-                                        <p className="text-xs text-slate-500 mt-2 line-clamp-2">
-                                            {project.description || 'No project description added yet.'}
-                                        </p>
-                                        <div className="mt-2 flex items-center justify-between text-xs text-slate-500 gap-4">
-                                            <span>{project.department?.name || 'General Office'}</span>
-                                            <span>@{project.employee?.username || 'team'}</span>
-                                        </div>
-                                        <div className="mt-3 flex items-center gap-3 flex-wrap text-xs">
-                                            <span className="font-semibold text-blue-600">{project.files?.length || 0} files</span>
-                                            {project.liveUrl && (
-                                                <a
-                                                    href={project.liveUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center space-x-1 text-emerald-500 hover:text-emerald-400 font-semibold"
-                                                >
-                                                    <ArrowUpRight className="h-3.5 w-3.5" />
-                                                    <span>Open Link</span>
-                                                </a>
-                                            )}
-                                        </div>
+                    <div className="space-y-3">
+                        {recentProjects.length > 0 ? (
+                            recentProjects.map((project) => (
+                                <div
+                                    key={project._id}
+                                    className="rounded-xl border border-slate-200 dark:border-slate-800 p-4"
+                                >
+                                    <p className="font-semibold text-slate-900 dark:text-white truncate">{project.title}</p>
+                                    <p className="text-xs text-slate-500 mt-2 line-clamp-2">
+                                        {project.description || 'No project description added yet.'}
+                                    </p>
+                                    <div className="mt-2 flex items-center justify-between text-xs text-slate-500 gap-4">
+                                        <span>{project.department?.name || 'General Office'}</span>
+                                        <span>@{project.employee?.username || 'team'}</span>
                                     </div>
-                                ))
-                            ) : (
-                                <div className="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 p-6 text-center text-slate-500">
-                                    No development updates available yet.
+                                    <div className="mt-3 flex items-center gap-3 flex-wrap text-xs">
+                                        <span className="font-semibold text-blue-600">{project.files?.length || 0} files</span>
+                                        {project.liveUrl && (
+                                            <a
+                                                href={project.liveUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center space-x-1 text-emerald-500 hover:text-emerald-400 font-semibold"
+                                            >
+                                                <ArrowUpRight className="h-3.5 w-3.5" />
+                                                <span>Open Link</span>
+                                            </a>
+                                        )}
+                                    </div>
                                 </div>
-                            )}
+                            ))
+                        ) : (
+                            <div className="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 p-6 text-center text-slate-500">
+                                No development updates available yet.
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

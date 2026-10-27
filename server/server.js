@@ -27,10 +27,13 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, 'uploads')));
 
 // Fallback to Cloudflare R2 for /uploads if not found locally
-app.use('/uploads/:key(*)', async (req, res, next) => {
+app.use('/uploads', async (req, res, next) => {
     if (!r2.isR2Configured) return next();
     try {
-        const key = req.params.key;
+        const rawKey = req.path.replace(/^\/+/, '');
+        if (!rawKey) return next();
+        const key = decodeURIComponent(rawKey);
+
         let streamData = null;
         try {
             streamData = await r2.getFileStream(key);
